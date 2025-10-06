@@ -29,6 +29,7 @@ import { RandomNumberGeneratorConverter } from "./RandomNumberGeneratorConverter
 import { TriangleCalculatorConverter } from "./TriangleCalculatorConverter";
 import { StatisticsCalculatorConverter } from "./StatisticsCalculatorConverter";
 import { AlgebraCalculatorConverter } from "./AlgebraCalculatorConverter";
+import { GeometryCalculatorConverter } from "./GeometryCalculatorConverter";
 import { MatrixCalculatorConverter } from "./MatrixCalculatorConverter";
 import { PrimeNumberToolsConverter } from "./PrimeNumberToolsConverter";
 import { GcdLcmCalculatorConverter } from "./GcdLcmCalculatorConverter";
@@ -67,6 +68,7 @@ export function CategoryView({ category }: { category: Category }) {
     if (category.id === "matrix-calculator") return <MatrixCalculatorConverter />;
     if (category.id === "prime-number-tools") return <PrimeNumberToolsConverter />;
     if (category.id === "gcd-lcm-calculator") return <GcdLcmCalculatorConverter />;
+    if (category.id === "geometry-calculator") return <GeometryCalculatorConverter />;
     return null;
   }
   return <UnitConverter category={category as UnitCategory} />;

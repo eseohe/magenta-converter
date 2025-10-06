@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -53,6 +53,8 @@ export function AlgebraCalculatorConverter() {
   // Polynomial operations
   const [poly1, setPoly1] = useState("x^2 + 3x + 2");
   const [poly2, setPoly2] = useState("x + 1");
+  const [polyOperation, setPolyOperation] = useState<'add' | 'subtract' | 'multiply' | 'divide' | null>(null);
+  const [polyEvalX, setPolyEvalX] = useState("2");
 
   // Expression simplifier
   const [expression, setExpression] = useState("2x + 3x - 5 + 4x - 2");
@@ -297,6 +299,199 @@ Solution: ${solutionText}`;
     }
   };
 
+  // Polynomial operations
+  interface PolynomialTerm {
+    coefficient: number;
+    power: number;
+  }
+
+  const parsePolynomial = (polyStr: string): PolynomialTerm[] => {
+    if (!polyStr.trim()) return [];
+    
+    try {
+      // Remove spaces and normalize
+      let normalized = polyStr.toLowerCase().replace(/\s/g, '');
+      
+      // Add + at beginning if doesn't start with +/-
+      if (!normalized.startsWith('+') && !normalized.startsWith('-')) {
+        normalized = '+' + normalized;
+      }
+      
+      // Split into terms by + and - (keeping the signs)
+      const termRegex = /[+-][^+-]+/g;
+      const matches = normalized.match(termRegex) || [];
+      
+      const terms: PolynomialTerm[] = [];
+      
+      matches.forEach(termStr => {
+        const term = termStr.trim();
+        
+        if (term.includes('x')) {
+          // Term with x variable
+          const xIndex = term.indexOf('x');
+          let coeff = term.substring(0, xIndex);
+          let power = 1;
+          
+          // Handle coefficient
+          if (coeff === '+' || coeff === '') coeff = '1';
+          else if (coeff === '-') coeff = '-1';
+          
+          // Handle power
+          if (term.includes('^')) {
+            const powerMatch = term.match(/\^(\d+)/);
+            if (powerMatch) power = parseInt(powerMatch[1]);
+          }
+          
+          terms.push({ coefficient: parseFloat(coeff), power });
+        } else {
+          // Constant term
+          const coeff = parseFloat(term);
+          if (!isNaN(coeff)) {
+            terms.push({ coefficient: coeff, power: 0 });
+          }
+        }
+      });
+      
+      // Combine like terms
+      const combined: { [key: number]: number } = {};
+      terms.forEach(term => {
+        combined[term.power] = (combined[term.power] || 0) + term.coefficient;
+      });
+      
+      // Convert back to array and sort by power (highest first)
+      return Object.entries(combined)
+        .map(([power, coeff]) => ({ power: parseInt(power), coefficient: coeff }))
+        .filter(term => Math.abs(term.coefficient) > 1e-10) // Remove near-zero coefficients
+        .sort((a, b) => b.power - a.power);
+        
+    } catch (error) {
+      return [];
+    }
+  };
+
+  const formatPolynomial = (terms: PolynomialTerm[]): string => {
+    if (terms.length === 0) return "0";
+    
+    let result = "";
+    
+    terms.forEach((term, index) => {
+      const { coefficient, power } = term;
+      
+      // Skip zero coefficients
+      if (Math.abs(coefficient) < 1e-10) return;
+      
+      // Add sign
+      if (index === 0) {
+        if (coefficient < 0) result += "-";
+      } else {
+        result += coefficient >= 0 ? " + " : " - ";
+      }
+      
+      // Add coefficient
+      const absCoeff = Math.abs(coefficient);
+      if (power === 0) {
+        // Constant term
+        result += absCoeff.toString();
+      } else if (absCoeff === 1) {
+        // Coefficient is 1, don't show it unless it's constant
+        if (power === 1) result += "x";
+        else result += `x^${power}`;
+      } else {
+        // Show coefficient
+        if (power === 1) result += `${absCoeff}x`;
+        else result += `${absCoeff}x^${power}`;
+      }
+    });
+    
+    return result || "0";
+  };
+
+  const addPolynomials = (poly1: PolynomialTerm[], poly2: PolynomialTerm[]): PolynomialTerm[] => {
+    const result: { [key: number]: number } = {};
+    
+    // Add coefficients from both polynomials
+    [...poly1, ...poly2].forEach(term => {
+      result[term.power] = (result[term.power] || 0) + term.coefficient;
+    });
+    
+    return Object.entries(result)
+      .map(([power, coeff]) => ({ power: parseInt(power), coefficient: coeff }))
+      .filter(term => Math.abs(term.coefficient) > 1e-10)
+      .sort((a, b) => b.power - a.power);
+  };
+
+  const subtractPolynomials = (poly1: PolynomialTerm[], poly2: PolynomialTerm[]): PolynomialTerm[] => {
+    const negatedPoly2 = poly2.map(term => ({ ...term, coefficient: -term.coefficient }));
+    return addPolynomials(poly1, negatedPoly2);
+  };
+
+  const multiplyPolynomials = (poly1: PolynomialTerm[], poly2: PolynomialTerm[]): PolynomialTerm[] => {
+    const result: { [key: number]: number } = {};
+    
+    poly1.forEach(term1 => {
+      poly2.forEach(term2 => {
+        const newPower = term1.power + term2.power;
+        const newCoeff = term1.coefficient * term2.coefficient;
+        result[newPower] = (result[newPower] || 0) + newCoeff;
+      });
+    });
+    
+    return Object.entries(result)
+      .map(([power, coeff]) => ({ power: parseInt(power), coefficient: coeff }))
+      .filter(term => Math.abs(term.coefficient) > 1e-10)
+      .sort((a, b) => b.power - a.power);
+  };
+
+  const dividePolynomials = (dividend: PolynomialTerm[], divisor: PolynomialTerm[]): { quotient: PolynomialTerm[], remainder: PolynomialTerm[] } => {
+    if (divisor.length === 0 || divisor.every(term => Math.abs(term.coefficient) < 1e-10)) {
+      return { quotient: [], remainder: dividend };
+    }
+    
+    let remainder = [...dividend];
+    const quotient: PolynomialTerm[] = [];
+    
+    // Get leading term of divisor
+    const leadingDivisor = divisor[0];
+    
+    while (remainder.length > 0 && remainder[0].power >= leadingDivisor.power) {
+      // Calculate next term of quotient
+      const leadingRemainder = remainder[0];
+      const quotientTerm: PolynomialTerm = {
+        coefficient: leadingRemainder.coefficient / leadingDivisor.coefficient,
+        power: leadingRemainder.power - leadingDivisor.power
+      };
+      
+      quotient.push(quotientTerm);
+      
+      // Multiply divisor by quotient term
+      const toSubtract = multiplyPolynomials([quotientTerm], divisor);
+      
+      // Subtract from remainder
+      remainder = subtractPolynomials(remainder, toSubtract);
+      remainder = remainder.filter(term => Math.abs(term.coefficient) > 1e-10);
+      remainder.sort((a, b) => b.power - a.power);
+    }
+    
+    return {
+      quotient: quotient.length > 0 ? quotient : [{ coefficient: 0, power: 0 }],
+      remainder: remainder.length > 0 ? remainder : [{ coefficient: 0, power: 0 }]
+    };
+  };
+
+  const evaluatePolynomial = (terms: PolynomialTerm[], x: number): number => {
+    return terms.reduce((sum, term) => sum + term.coefficient * Math.pow(x, term.power), 0);
+  };
+
+  const derivativePolynomial = (terms: PolynomialTerm[]): PolynomialTerm[] => {
+    return terms
+      .filter(term => term.power > 0) // Remove constants
+      .map(term => ({
+        coefficient: term.coefficient * term.power,
+        power: term.power - 1
+      }))
+      .filter(term => Math.abs(term.coefficient) > 1e-10);
+  };
+
   const reset = () => {
     setQuadA("1");
     setQuadB("-5");
@@ -309,6 +504,8 @@ Solution: ${solutionText}`;
     setSysC2("1");
     setPoly1("x^2 + 3x + 2");
     setPoly2("x + 1");
+    setPolyOperation(null);
+    setPolyEvalX("2");
     setExpression("2x + 3x - 5 + 4x - 2");
   };
 
@@ -316,6 +513,35 @@ Solution: ${solutionText}`;
   const systemResult = solveSystem();
   const simplified = simplifyExpression(expression);
   const factored = factorQuadratic(quadraticResult.a, quadraticResult.b, quadraticResult.c);
+
+  // Polynomial calculations
+  const parsedPoly1 = parsePolynomial(poly1);
+  const parsedPoly2 = parsePolynomial(poly2);
+  const polyResult = useMemo((): PolynomialTerm[] | { quotient: PolynomialTerm[], remainder: PolynomialTerm[] } | null => {
+    if (!polyOperation) return null;
+    
+    switch (polyOperation) {
+      case 'add':
+        return addPolynomials(parsedPoly1, parsedPoly2);
+      case 'subtract':
+        return subtractPolynomials(parsedPoly1, parsedPoly2);
+      case 'multiply':
+        return multiplyPolynomials(parsedPoly1, parsedPoly2);
+      case 'divide':
+        return dividePolynomials(parsedPoly1, parsedPoly2);
+      default:
+        return null;
+    }
+  }, [poly1, poly2, polyOperation]);
+
+  const poly1Evaluation = useMemo(() => {
+    const x = parseFloat(polyEvalX);
+    return isNaN(x) ? null : evaluatePolynomial(parsedPoly1, x);
+  }, [poly1, polyEvalX]);
+
+  const poly1Derivative = useMemo(() => {
+    return derivativePolynomial(parsedPoly1);
+  }, [poly1]);
 
   return (
     <div className="space-y-6">
@@ -775,37 +1001,114 @@ Solution: ${solutionText}`;
                     />
                   </div>
 
-                  <div className="grid grid-cols-4 gap-2">
-                    <Button variant="outline" size="sm">
-                      <Plus className="size-4" />
+                  <div className="space-y-3">
+                    <div className="text-sm font-medium">Operations</div>
+                    <div className="grid grid-cols-4 gap-2">
+                      <Button 
+                        variant={polyOperation === 'add' ? "default" : "outline"} 
+                        size="sm"
+                        onClick={() => setPolyOperation('add')}
+                      >
+                        <Plus className="size-4" />
+                      </Button>
+                      <Button 
+                        variant={polyOperation === 'subtract' ? "default" : "outline"} 
+                        size="sm"
+                        onClick={() => setPolyOperation('subtract')}
+                      >
+                        <Minus className="size-4" />
+                      </Button>
+                      <Button 
+                        variant={polyOperation === 'multiply' ? "default" : "outline"} 
+                        size="sm"
+                        onClick={() => setPolyOperation('multiply')}
+                      >
+                        <X className="size-4" />
+                      </Button>
+                      <Button 
+                        variant={polyOperation === 'divide' ? "default" : "outline"} 
+                        size="sm"
+                        onClick={() => setPolyOperation('divide')}
+                      >
+                        <Divide className="size-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Evaluate at x =</Label>
+                    <Input
+                      value={polyEvalX}
+                      onChange={(e) => setPolyEvalX(e.target.value)}
+                      placeholder="2"
+                      className="w-20"
+                    />
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {setPoly1("2x^3 - 5x^2 + 3x - 7"); setPoly2("x^2 - 2x + 1");}}
+                    >
+                      Example 1
                     </Button>
-                    <Button variant="outline" size="sm">
-                      <Minus className="size-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <X className="size-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Divide className="size-4" />
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {setPoly1("x^4 + 2x^2 + 1"); setPoly2("x^2 + 1");}}
+                    >
+                      Example 2
                     </Button>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <div className="bg-muted p-4 rounded-lg text-center">
-                    <div className="text-4xl mb-2">🚧</div>
-                    <div className="text-muted-foreground">
-                      Advanced polynomial operations coming soon
+                  {polyOperation && polyResult && (
+                    <div className="space-y-3">
+                      <div className="text-sm font-medium">
+                        {polyOperation === 'add' && 'Addition Result'}
+                        {polyOperation === 'subtract' && 'Subtraction Result'}
+                        {polyOperation === 'multiply' && 'Multiplication Result'}
+                        {polyOperation === 'divide' && 'Division Result'}
+                      </div>
+                      <div className="bg-background p-3 rounded border">
+                        {polyOperation === 'divide' && polyResult && 'quotient' in polyResult ? (
+                          <div className="space-y-2 font-mono text-sm">
+                            <div><strong>Quotient:</strong> {formatPolynomial(polyResult.quotient || [])}</div>
+                            <div><strong>Remainder:</strong> {formatPolynomial(polyResult.remainder || [])}</div>
+                          </div>
+                        ) : (
+                          <div className="font-mono text-sm">
+                            {formatPolynomial(Array.isArray(polyResult) ? polyResult : [])}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    <div className="text-sm font-medium">Polynomial Analysis</div>
+                    <div className="bg-muted p-3 rounded-lg space-y-2 text-sm">
+                      <div><strong>P₁(x):</strong> <span className="font-mono">{formatPolynomial(parsedPoly1)}</span></div>
+                      <div><strong>P₂(x):</strong> <span className="font-mono">{formatPolynomial(parsedPoly2)}</span></div>
+                      {poly1Evaluation !== null && (
+                        <div><strong>P₁({polyEvalX}):</strong> {poly1Evaluation.toFixed(4)}</div>
+                      )}
+                      <div><strong>P₁'(x):</strong> <span className="font-mono">{formatPolynomial(poly1Derivative)}</span></div>
+                      <div><strong>Degree:</strong> {Math.max(...parsedPoly1.map(t => t.power), 0)}</div>
                     </div>
                   </div>
 
-                  <div className="text-xs space-y-1">
-                    <div><strong>Planned Features:</strong></div>
-                    <div>• Polynomial addition/subtraction</div>
-                    <div>• Polynomial multiplication</div>
-                    <div>• Polynomial division</div>
-                    <div>• Factoring algorithms</div>
-                    <div>• Root finding</div>
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium">Features</div>
+                    <div className="text-xs space-y-1 text-muted-foreground">
+                      <div>✓ Polynomial arithmetic operations</div>
+                      <div>✓ Polynomial evaluation</div>
+                      <div>✓ Derivative calculation</div>
+                      <div>✓ Automatic term combination</div>
+                      <div>✓ Degree analysis</div>
+                    </div>
                   </div>
                 </div>
               </div>

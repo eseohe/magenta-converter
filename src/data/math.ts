@@ -80,6 +80,14 @@ export const mathCategories: CustomCategory[] = [
     description: "Find Greatest Common Divisor and Least Common Multiple of numbers",
     icon: "🧮",
     custom: true
+  },
+  {
+    id: "geometry-calculator",
+    group: "Other",
+    name: "Geometry Calculator",
+    description: "Calculate area, perimeter, and properties of circles, rectangles, polygons, and more",
+    icon: "⭕",
+    custom: true
   }
 ];
 
@@ -93,5 +101,6 @@ export const mathCustomCategories = [
   "algebra-calculator",
   "matrix-calculator",
   "prime-number-tools",
-  "gcd-lcm-calculator"
+  "gcd-lcm-calculator",
+  "geometry-calculator"
 ];

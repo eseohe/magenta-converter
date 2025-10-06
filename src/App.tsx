@@ -7,10 +7,9 @@ import CategoryPage from "./pages/CategoryPage";
 import { allCategories } from "./data/categories";
 import { sections, getSectionById, getSectionByCategory } from "./data/sections";
 import type { Category } from "./types";
-import { Search } from "lucide-react";
-import { Input } from "./components/ui/input";
 import { CategoryGrid } from "./components/CategoryGrid";
 import { CategoryBreadcrumb } from "./components/CategoryBreadcrumb";
+import { SearchBar } from "./components/SearchBar";
 
 // Main routing component
 function AppContent() {
@@ -62,15 +61,11 @@ function AppContent() {
   return (
     <AppShell onHome={handleHome} title={getTitle()}>
       <div className="mb-6 grid gap-4 sm:grid-cols-[1fr,auto] sm:items-center">
-        <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input 
-            value={query} 
-            onChange={(e) => setQuery(e.target.value)} 
-            placeholder="Search conversions, e.g. km to mi" 
-            className="pl-9" 
-          />
-        </div>
+        <SearchBar 
+          value={query} 
+          onChange={setQuery} 
+          placeholder="Search conversions, e.g. km to mi" 
+        />
       </div>
 
       <Routes>

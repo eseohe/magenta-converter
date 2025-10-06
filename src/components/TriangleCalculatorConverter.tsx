@@ -208,39 +208,61 @@ export function TriangleCalculatorConverter() {
   };
 
   const calculateRightTriangle = (): TriangleResult => {
-    const a = parseFloat(rtSideA);
-    const b = parseFloat(rtSideB);
-    
-    let c: number;
-    if (rtHypotenuse) {
-      c = parseFloat(rtHypotenuse);
-      // Verify it's a valid right triangle
-      if (Math.abs(a * a + b * b - c * c) > 0.001) {
-        return { isValid: false };
-      }
-    } else {
-      // Calculate hypotenuse
-      c = Math.sqrt(a * a + b * b);
+    const a = rtSideA ? parseFloat(rtSideA) : 0;
+    const b = rtSideB ? parseFloat(rtSideB) : 0;
+    const hyp = rtHypotenuse ? parseFloat(rtHypotenuse) : 0;
+
+    // Validate inputs
+    if (a <= 0 && b <= 0 && hyp <= 0) {
+      return { isValid: false };
     }
 
-    // Calculate angles
-    const angleADeg = toDegrees(Math.atan(a / b));
-    const angleBDeg = toDegrees(Math.atan(b / a));
+    let sideA = a, sideB = b, sideC = hyp;
+
+    // Case 1: Both sides given, calculate hypotenuse
+    if (a > 0 && b > 0 && !rtHypotenuse) {
+      sideC = Math.sqrt(a * a + b * b);
+    }
+    // Case 2: One side and hypotenuse given, calculate other side
+    else if (a > 0 && hyp > 0 && !rtSideB) {
+      if (hyp <= a) return { isValid: false }; // Invalid right triangle
+      sideB = Math.sqrt(hyp * hyp - a * a);
+    }
+    else if (b > 0 && hyp > 0 && !rtSideA) {
+      if (hyp <= b) return { isValid: false }; // Invalid right triangle
+      sideA = Math.sqrt(hyp * hyp - b * b);
+    }
+    // Case 3: All three given, verify it's a right triangle
+    else if (a > 0 && b > 0 && hyp > 0) {
+      if (Math.abs(a * a + b * b - hyp * hyp) > 0.001) {
+        return { isValid: false };
+      }
+      sideA = a;
+      sideB = b;
+      sideC = hyp;
+    }
+    else {
+      return { isValid: false };
+    }
+
+    // Calculate angles (ensuring no division by zero)
+    const angleADeg = sideB > 0 ? toDegrees(Math.atan(sideA / sideB)) : 0;
+    const angleBDeg = sideA > 0 ? toDegrees(Math.atan(sideB / sideA)) : 0;
     const angleCDeg = 90;
 
-    const area = 0.5 * a * b;
-    const perimeter = a + b + c;
+    const area = 0.5 * sideA * sideB;
+    const perimeter = sideA + sideB + sideC;
 
     return {
-      sideA: a,
-      sideB: b,
-      sideC: c,
+      sideA,
+      sideB,
+      sideC,
       angleA: angleADeg,
       angleB: angleBDeg,
       angleC: angleCDeg,
       area,
       perimeter,
-      height: b, // Height is one of the sides in a right triangle
+      height: Math.min(sideA, sideB), // Height is the shorter side in a right triangle
       type: "Right Triangle",
       isValid: true
     };
