@@ -9,6 +9,7 @@ import { digitalCategories, digitalCustomCategories } from "./digital";
 import { transportCategories } from "./transport";
 import { specialtyCategories, specialtyCustomCategories } from "./specialty";
 import { financeCategories, financeCustomCategories } from "./finance";
+import { mathCategories } from "./math";
 
 // Combine all unit categories
 export const unitCategories: UnitCategory[] = [
@@ -28,6 +29,7 @@ export const customCategories: CustomCategory[] = [
   ...fitnessCustomCategories,
   ...specialtyCustomCategories,
   ...financeCustomCategories,
+  ...mathCategories,
 ];
 
 // Export the combined list (for backward compatibility)
@@ -47,4 +49,5 @@ export {
   specialtyCustomCategories,
   financeCategories,
   financeCustomCategories,
+  mathCategories,
 };

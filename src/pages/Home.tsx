@@ -23,7 +23,7 @@ export default function HomePage({ categories, onSelect, onSectionSelect, search
       {showSections ? (
         <div className="space-y-6">
           <div className="text-center">
-            <h2 className="text-xl font-semibold mb-2">Choose a Category</h2>
+            <h2 className="text-xl font-semibold mb-2">Choose a Category or type what you want in the search bar</h2>
             <p className="text-muted-foreground">Select a section to explore specific types of conversions</p>
           </div>
           <SectionGrid sections={sections} onSelect={onSectionSelect} />

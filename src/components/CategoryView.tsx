@@ -22,6 +22,16 @@ import { InflationCalculatorConverter } from "./InflationCalculatorConverter";
 import { BMICalculatorConverter } from "./BMICalculatorConverter";
 import { IPSubnetCalculatorConverter } from "./IPSubnetCalculatorConverter";
 import { BandwidthCalculatorConverter } from "./BandwidthCalculatorConverter";
+import { ScientificCalculatorConverter } from "./ScientificCalculatorConverter";
+import { FractionCalculatorConverter } from "./FractionCalculatorConverter";
+import { PercentageCalculatorConverter } from "./PercentageCalculatorConverter";
+import { RandomNumberGeneratorConverter } from "./RandomNumberGeneratorConverter";
+import { TriangleCalculatorConverter } from "./TriangleCalculatorConverter";
+import { StatisticsCalculatorConverter } from "./StatisticsCalculatorConverter";
+import { AlgebraCalculatorConverter } from "./AlgebraCalculatorConverter";
+import { MatrixCalculatorConverter } from "./MatrixCalculatorConverter";
+import { PrimeNumberToolsConverter } from "./PrimeNumberToolsConverter";
+import { GcdLcmCalculatorConverter } from "./GcdLcmCalculatorConverter";
 
 export function CategoryView({ category }: { category: Category }) {
   if ((category as any).custom) {
@@ -47,6 +57,16 @@ export function CategoryView({ category }: { category: Category }) {
     if (category.id === "bmi-calculator") return <BMICalculatorConverter />;
     if (category.id === "ip-subnet-calculator") return <IPSubnetCalculatorConverter />;
     if (category.id === "bandwidth-calculator") return <BandwidthCalculatorConverter />;
+    if (category.id === "scientific-calculator") return <ScientificCalculatorConverter />;
+    if (category.id === "fraction-calculator") return <FractionCalculatorConverter />;
+    if (category.id === "percentage-calculator") return <PercentageCalculatorConverter />;
+    if (category.id === "random-number-generator") return <RandomNumberGeneratorConverter />;
+    if (category.id === "triangle-calculator") return <TriangleCalculatorConverter />;
+    if (category.id === "statistics-calculator") return <StatisticsCalculatorConverter />;
+    if (category.id === "algebra-calculator") return <AlgebraCalculatorConverter />;
+    if (category.id === "matrix-calculator") return <MatrixCalculatorConverter />;
+    if (category.id === "prime-number-tools") return <PrimeNumberToolsConverter />;
+    if (category.id === "gcd-lcm-calculator") return <GcdLcmCalculatorConverter />;
     return null;
   }
   return <UnitConverter category={category as UnitCategory} />;

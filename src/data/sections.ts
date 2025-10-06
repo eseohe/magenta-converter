@@ -13,6 +13,7 @@ import {
   financeCategories,
   financeCustomCategories,
 } from "./categories";
+import { mathCategories, mathCustomCategories } from "./math";
 
 export interface Section {
   id: string;
@@ -78,6 +79,13 @@ export const sections: Section[] = [
     description: "Currency, loans, investments, and financial calculations",
     icon: "💰",
     categories: [...financeCategories, ...financeCustomCategories],
+  },
+  {
+    id: "math",
+    name: "Mathematics", 
+    description: "Scientific calculator, statistics, geometry, and mathematical tools",
+    icon: "🔢",
+    categories: [...mathCategories],
   },
 ];
 
