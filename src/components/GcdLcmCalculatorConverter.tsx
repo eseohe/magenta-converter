@@ -36,6 +36,7 @@ export function GcdLcmCalculatorConverter() {
   const [calculationType, setCalculationType] = useState<"two" | "multiple">("two");
   const [bezoutA, setBezoutA] = useState("25");
   const [bezoutB, setBezoutB] = useState("9");
+  const [diophantineC, setDiophantineC] = useState("1");
 
   // Euclidean algorithm for GCD
   const gcd = (a: number, b: number): number => {
@@ -282,12 +283,13 @@ ${result.steps.join('\n')}`;
     setMultipleNumbers("12, 18, 24, 30");
     setBezoutA("25");
     setBezoutB("9");
+    setDiophantineC("1");
     setCalculationType("two");
   };
 
   const results = calculateResults();
   const bezoutResult = extendedGcd(parseInt(bezoutA) || 0, parseInt(bezoutB) || 0);
-  const diophantineResult = solveDiophantine(parseInt(bezoutA) || 0, parseInt(bezoutB) || 0, 1);
+  const diophantineResult = solveDiophantine(parseInt(bezoutA) || 0, parseInt(bezoutB) || 0, parseInt(diophantineC) || 1);
 
   return (
     <div className="space-y-6">
@@ -665,17 +667,75 @@ ${result.steps.join('\n')}`;
             <CardContent className="space-y-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-4">
-                  <div className="text-sm text-muted-foreground">
-                    Solve: ax + by = c using values from Extended GCD tab
+                  <div className="space-y-3">
+                    <div className="text-sm text-muted-foreground">
+                      Solve linear Diophantine equations of the form ax + by = c
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {setBezoutA("15"); setBezoutB("25"); setDiophantineC("10");}}
+                      >
+                        Example: 15x + 25y = 10
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {setBezoutA("7"); setBezoutB("11"); setDiophantineC("1");}}
+                      >
+                        Bézout: 7x + 11y = 1
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {setBezoutA("12"); setBezoutB("18"); setDiophantineC("30");}}
+                      >
+                        Example: 12x + 18y = 30
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="diopha">Coefficient a</Label>
+                      <Input
+                        id="diopha"
+                        type="number"
+                        value={bezoutA}
+                        onChange={(e) => setBezoutA(e.target.value)}
+                        placeholder="Enter a"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="diophb">Coefficient b</Label>
+                      <Input
+                        id="diophb"
+                        type="number"
+                        value={bezoutB}
+                        onChange={(e) => setBezoutB(e.target.value)}
+                        placeholder="Enter b"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="diophc">Target value c</Label>
+                      <Input
+                        id="diophc"
+                        type="number"
+                        value={diophantineC}
+                        onChange={(e) => setDiophantineC(e.target.value)}
+                        placeholder="Enter c"
+                      />
+                    </div>
                   </div>
 
                   <div className="bg-muted p-4 rounded-lg">
                     <div className="text-center">
                       <div className="text-lg font-mono">
-                        {bezoutA}x + {bezoutB}y = c
+                        {bezoutA}x + {bezoutB}y = {diophantineC}
                       </div>
                       <div className="text-sm text-muted-foreground mt-2">
-                        Currently solving for c = 1 (Bézout's identity)
+                        Linear Diophantine equation to solve
                       </div>
                     </div>
                   </div>
