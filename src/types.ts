@@ -10,7 +10,7 @@ export type Unit = {
 
 export type UnitCategory = {
   id: string;
-  group: "Measurement" | "Digital" | "Science" | "Transport" | "Other" | "Finance";
+  group: "Measurement" | "Digital" | "Science" | "Electronics" | "Transport" | "Other" | "Finance";
   name: string;
   description?: string;
   icon?: string; // lucide-react icon name

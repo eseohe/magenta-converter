@@ -3,9 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Combobox } from "./ui/combobox";
 import { Badge } from "./ui/badge";
 import { Separator } from "./ui/separator";
-import { Copy, RefreshCcw, Globe2, Clock } from "lucide-react";
+import { Copy, RefreshCcw, Globe2, Clock, ArrowUpDown } from "lucide-react";
 
 interface TimeZone {
   id: string;
@@ -118,71 +119,58 @@ export function TimezoneConverter() {
       <CardContent className="space-y-6">
         <div className="grid gap-4 sm:grid-cols-[1fr,auto,1fr] sm:items-end">
           <div className="space-y-2">
-            <div className="text-xs text-muted-foreground">From Time & Zone</div>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Input
-                  value={timeInput}
-                  onChange={(e) => setTimeInput(e.target.value)}
-                  placeholder="HH:MM (24h format)"
-                  className="flex-1"
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={getCurrentTime}
-                  title="Use current time"
-                >
-                  <Clock className="size-4" />
-                </Button>
-              </div>
-              <Select value={fromZone} onValueChange={setFromZone}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="max-h-72">
-                  {timeZones.map((tz) => (
-                    <SelectItem key={tz.id} value={tz.id}>
-                      {tz.name}
-                      <span className="ml-2 text-muted-foreground">
-                        ({tz.utcOffset >= 0 ? '+' : ''}{tz.utcOffset}h)
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="text-xs text-muted-foreground">From</div>
+            <div className="flex items-center gap-2">
+              <Input
+                value={timeInput}
+                onChange={(e) => setTimeInput(e.target.value)}
+                placeholder="HH:MM (24h format)"
+              />
+              <Combobox
+                options={timeZones.map(tz => ({
+                  value: tz.id,
+                  label: `${tz.name} (${tz.utcOffset >= 0 ? '+' : ''}${tz.utcOffset}h)`
+                }))}
+                value={fromZone}
+                onValueChange={setFromZone}
+                placeholder="Search timezone..."
+                searchPlaceholder="Search timezones..."
+                emptyMessage="No timezone found."
+                className="w-[180px]"
+              />
             </div>
           </div>
 
           <div className="hidden sm:flex items-center justify-center pb-2">
-            <div className="size-8 rounded-full bg-primary/10 grid place-items-center text-primary">
-              <Clock className="size-4" />
-            </div>
+            <Button type="button" variant="outline" size="icon" className="rounded-full cursor-pointer" onClick={() => { 
+              const tempZone = fromZone; 
+              setFromZone(toZone); 
+              setToZone(tempZone); 
+            }}>
+              <ArrowUpDown className="size-4" />
+            </Button>
           </div>
 
           <div className="space-y-2">
-            <div className="text-xs text-muted-foreground">Converted Time & Zone</div>
-            <div className="space-y-2">
+            <div className="text-xs text-muted-foreground">To</div>
+            <div className="flex items-center gap-2">
               <Input
                 readOnly
                 value={convertedTime ? formatTime(convertedTime.hours, convertedTime.minutes) : ""}
                 className={!convertedTime ? "text-muted-foreground" : ""}
               />
-              <Select value={toZone} onValueChange={setToZone}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="max-h-72">
-                  {timeZones.map((tz) => (
-                    <SelectItem key={tz.id} value={tz.id}>
-                      {tz.name}
-                      <span className="ml-2 text-muted-foreground">
-                        ({tz.utcOffset >= 0 ? '+' : ''}{tz.utcOffset}h)
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Combobox
+                options={timeZones.map(tz => ({
+                  value: tz.id,
+                  label: `${tz.name} (${tz.utcOffset >= 0 ? '+' : ''}${tz.utcOffset}h)`
+                }))}
+                value={toZone}
+                onValueChange={setToZone}
+                placeholder="Search timezone..."
+                searchPlaceholder="Search timezones..."
+                emptyMessage="No timezone found."
+                className="w-[180px]"
+              />
             </div>
           </div>
         </div>
@@ -211,13 +199,13 @@ export function TimezoneConverter() {
             <RefreshCcw className="mr-2 size-4" />
             Reset
           </Button>
-          <Button type="button" variant="outline" onClick={copy} disabled={!convertedTime}>
-            <Copy className="mr-2 size-4" />
-            Copy time
-          </Button>
           <Button type="button" variant="outline" onClick={getCurrentTime}>
             <Clock className="mr-2 size-4" />
             Now
+          </Button>
+          <Button type="button" variant="outline" onClick={copy} disabled={!convertedTime}>
+            <Copy className="mr-2 size-4" />
+            Copy result
           </Button>
         </div>
 

@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Combobox } from "./ui/combobox";
 import { Badge } from "./ui/badge";
 import { Separator } from "./ui/separator";
 import { Copy, RefreshCcw, Monitor } from "lucide-react";
@@ -114,31 +115,18 @@ export function ScreenResolutionConverter() {
           <div className="space-y-4">
             <div className="space-y-2">
               <div className="text-sm font-medium">Preset Resolutions</div>
-              <Select value={selectedResolution} onValueChange={setSelectedResolution}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="max-h-72">
-                  {Object.entries(
-                    resolutions.reduce((acc, res) => {
-                      if (!acc[res.category]) acc[res.category] = [];
-                      acc[res.category].push(res);
-                      return acc;
-                    }, {} as Record<string, Resolution[]>)
-                  ).map(([category, categoryResolutions]) => (
-                    <div key={category}>
-                      <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
-                        {category}
-                      </div>
-                      {categoryResolutions.map((res) => (
-                        <SelectItem key={res.id} value={res.id}>
-                          {res.name} ({res.width}×{res.height})
-                        </SelectItem>
-                      ))}
-                    </div>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Combobox
+                options={resolutions.map(res => ({
+                  value: res.id,
+                  label: `${res.name} (${res.width}×${res.height}) - ${res.category}`
+                }))}
+                value={selectedResolution}
+                onValueChange={setSelectedResolution}
+                placeholder="Search resolution..."
+                searchPlaceholder="Search resolutions..."
+                emptyMessage="No resolution found."
+                className="w-full"
+              />
             </div>
 
             <div className="space-y-2">

@@ -24,7 +24,34 @@ export function AppShell({ children, onHome, title = "Magenta Converter" }: { ch
         </div>
       </header>
       <main className="container mx-auto max-w-6xl px-4 py-8 md:py-10">{children}</main>
-      <footer className="container pb-10 pt-8 text-center text-sm text-muted-foreground">Built with React + Vite + Tailwind + shadcn/ui</footer>
+      <footer className="border-t bg-background/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col items-center justify-center space-y-4 text-center">
+            <div className="flex items-center gap-2 text-primary">
+              <Wand2 className="size-5" />
+              <span className="font-semibold text-lg">Magenta Converter</span>
+            </div>
+            <p className="text-sm text-muted-foreground max-w-md">
+              A comprehensive suite of conversion tools for units, currencies, calculations, and more.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center gap-2 text-xs text-muted-foreground">
+              <span>Built with</span>
+              <div className="flex items-center gap-1">
+                <span className="font-medium text-[#61DAFB]">React</span>
+                <span>•</span>
+                <span className="font-medium text-[#646CFF]">Vite</span>
+                <span>•</span>
+                <span className="font-medium text-[#06B6D4]">Tailwind CSS</span>
+                <span>•</span>
+                <span className="font-medium">shadcn/ui</span>
+              </div>
+            </div>
+            <div className="pt-2 text-xs text-muted-foreground">
+              © {new Date().getFullYear()} Magenta Converter. Made with ❤️ for productivity.
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

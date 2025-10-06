@@ -54,4 +54,6 @@ export const digitalCategories: UnitCategory[] = [
 
 export const digitalCustomCategories: CustomCategory[] = [
   { id: "screen-resolution", group: "Digital", name: "Screen Resolution", description: "Display resolutions, aspect ratios, pixel density", icon: "Monitor", custom: true },
+  { id: "ip-subnet-calculator", group: "Digital", name: "IP Address & Subnet Calculator", description: "IPv4 and IPv6 subnet calculations, network addresses, host ranges, subnet masks", icon: "Network", custom: true },
+  { id: "bandwidth-calculator", group: "Digital", name: "Bandwidth Calculator", description: "Download/upload time calculations, website bandwidth requirements", icon: "Wifi", custom: true },
 ];

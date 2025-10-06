@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { Combobox } from "./ui/combobox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Badge } from "./ui/badge";
 import { Separator } from "./ui/separator";
@@ -119,6 +120,13 @@ export function CurrencyConverter() {
     return Array.from(set).sort();
   }, [payload, base]);
 
+  const currencyOptions = useMemo(() => {
+    return codes.map(code => ({
+      value: code,
+      label: code,
+    }));
+  }, [codes]);
+
   const lastUpdated = store ? new Date(store.timestamp) : null;
 
   return (
@@ -135,22 +143,14 @@ export function CurrencyConverter() {
             <div className="text-xs text-muted-foreground">From</div>
             <div className="flex items-center gap-2">
               <Input inputMode="decimal" value={amount} onChange={(e)=>setAmount(e.target.value)} placeholder="Enter amount" />
-              <Select value={from} onValueChange={setFrom}>
-                <SelectTrigger className="w-[180px]"><SelectValue placeholder="Currency"/></SelectTrigger>
-                <SelectContent className="max-h-72">
-                  {payload && (
-                    <>
-                      {COMMON.filter(c=>codes.includes(c)).map((c)=>(
-                        <SelectItem key={c} value={c}>{c}</SelectItem>
-                      ))}
-                      <Separator className="my-1"/>
-                    </>
-                  )}
-                  {codes.map((c)=> (
-                    <SelectItem key={c} value={c}>{c}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Combobox
+                options={currencyOptions}
+                value={from}
+                onValueChange={setFrom}
+                placeholder="Currency"
+                searchPlaceholder="Search currencies..."
+                className="w-[180px]"
+              />
             </div>
           </div>
 
@@ -162,22 +162,14 @@ export function CurrencyConverter() {
             <div className="text-xs text-muted-foreground">To</div>
             <div className="flex items-center gap-2">
               <Input readOnly value={Number.isFinite(result) ? formatNumber(result) : ""} />
-              <Select value={to} onValueChange={setTo}>
-                <SelectTrigger className="w-[180px]"><SelectValue placeholder="Currency"/></SelectTrigger>
-                <SelectContent className="max-h-72">
-                  {payload && (
-                    <>
-                      {COMMON.filter(c=>codes.includes(c)).map((c)=>(
-                        <SelectItem key={c} value={c}>{c}</SelectItem>
-                      ))}
-                      <Separator className="my-1"/>
-                    </>
-                  )}
-                  {codes.map((c)=> (
-                    <SelectItem key={c} value={c}>{c}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Combobox
+                options={currencyOptions}
+                value={to}
+                onValueChange={setTo}
+                placeholder="Currency"
+                searchPlaceholder="Search currencies..."
+                className="w-[180px]"
+              />
             </div>
           </div>
         </div>
@@ -185,14 +177,18 @@ export function CurrencyConverter() {
         <div className="grid gap-4 md:grid-cols-[1fr,auto,1fr] md:items-center">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             Base:
-            <Select value={base} onValueChange={setBase}>
-              <SelectTrigger className="w-[140px] h-8 text-xs"><SelectValue/></SelectTrigger>
-              <SelectContent className="max-h-72">
-                {COMMON.filter(c=>codes.includes(c) || c===base).map((c)=>(<SelectItem key={c} value={c}>{c}</SelectItem>))}
-                <Separator className="my-1"/>
-                {codes.map((c)=>(<SelectItem key={c} value={c}>{c}</SelectItem>))}
-              </SelectContent>
-            </Select>
+            <Combobox
+              options={[
+                ...COMMON.filter(c=>codes.includes(c) || c===base).map(c => ({ value: c, label: c })),
+                ...codes.map(c => ({ value: c, label: c }))
+              ]}
+              value={base}
+              onValueChange={setBase}
+              placeholder="Search base..."
+              searchPlaceholder="Search currencies..."
+              emptyMessage="No currency found."
+              className="w-[140px] h-8 text-xs"
+            />
             <Badge variant="secondary" className="ml-2">{payload?.base ?? "—"}</Badge>
           </div>
           <div className="hidden md:block"/>

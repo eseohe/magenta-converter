@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Combobox } from "./ui/combobox";
 import { Badge } from "./ui/badge";
 import { Separator } from "./ui/separator";
 import { ArrowUpDown, Copy, RefreshCcw } from "lucide-react";
@@ -14,6 +14,13 @@ export function UnitConverter({ category }: { category: UnitCategory }) {
   const [from, setFrom] = useState(category.units[0].id);
   const [to, setTo] = useState(category.units[1]?.id ?? category.units[0].id);
   const [input, setInput] = useState<string>("1");
+
+  // Convert units to combobox options
+  const unitOptions = category.units.map(unit => ({
+    value: unit.id,
+    label: unit.label,
+    symbol: unit.symbol
+  }));
 
   const parsed = Number.parseFloat(input.replace(/,/g, ""));
   const result = useMemo(() => {
@@ -49,14 +56,14 @@ export function UnitConverter({ category }: { category: UnitCategory }) {
             <div className="text-xs text-muted-foreground">From</div>
             <div className="flex items-center gap-2">
               <Input inputMode="decimal" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Enter value" />
-              <Select value={from} onValueChange={setFrom}>
-                <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
-                <SelectContent className="max-h-72">
-                  {category.units.map((u) => (
-                    <SelectItem key={u.id} value={u.id}>{u.label}{u.symbol ? ` (${u.symbol})` : ""}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Combobox
+                options={unitOptions}
+                value={from}
+                onValueChange={setFrom}
+                placeholder="Select unit"
+                searchPlaceholder="Search units..."
+                className="w-[180px]"
+              />
             </div>
           </div>
 
@@ -70,14 +77,14 @@ export function UnitConverter({ category }: { category: UnitCategory }) {
             <div className="text-xs text-muted-foreground">To</div>
             <div className="flex items-center gap-2">
               <Input readOnly value={Number.isFinite(result) ? formatNumber(result) : ""} />
-              <Select value={to} onValueChange={setTo}>
-                <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
-                <SelectContent className="max-h-72">
-                  {category.units.map((u) => (
-                    <SelectItem key={u.id} value={u.id}>{u.label}{u.symbol ? ` (${u.symbol})` : ""}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Combobox
+                options={unitOptions}
+                value={to}
+                onValueChange={setTo}
+                placeholder="Select unit"
+                searchPlaceholder="Search units..."
+                className="w-[180px]"
+              />
             </div>
           </div>
         </div>
