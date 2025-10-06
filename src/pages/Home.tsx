@@ -17,7 +17,7 @@ export default function HomePage({ categories, onSelect, onSectionSelect, search
     <div className="space-y-8">
       <div className="mx-auto max-w-3xl text-center space-y-3">
         <h1 className="text-3xl md:text-5xl font-semibold tracking-tight bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">Free Magenta Converter/Calculator</h1>
-        <p className="text-muted-foreground text-lg">Free online unit converter & calculator tool - Convert length, weight, temperature, currency, time zones, and more. Scientific calculator, percentage calculator, fraction calculator, and advanced math tools all in one place.</p>
+        <p className="text-muted-foreground text-lg">Free online unit converter & calculator tool - Convert length, weight, temperature, currency, color, time zones, and more. Scientific calculator, percentage calculator, fraction calculator, and advanced math tools all in one place.</p>
       </div>
       
       {showSections ? (
