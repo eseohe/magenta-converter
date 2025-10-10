@@ -380,36 +380,36 @@ export function RandomNumberGeneratorConverter() {
 
           {/* Latest Result Display */}
           {latestResult && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  Latest Result
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => copyResult(latestResult.value)}
-                  >
-                    <Copy className="size-4" />
-                  </Button>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="bg-muted p-6 rounded-lg text-center">
-                  <div className="text-sm text-muted-foreground mb-2">{latestResult.type}</div>
-                  <div className="text-3xl font-mono font-bold text-primary">
-                    {Array.isArray(latestResult.value) 
-                      ? latestResult.value.join(", ")
-                      : typeof latestResult.value === 'object'
-                        ? JSON.stringify(latestResult.value)
+            (latestResult.type.startsWith("Random Numbers") || latestResult.type.startsWith("Decimal Number")) && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    Latest Result
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => copyResult(latestResult.value)}
+                    >
+                      <Copy className="size-4" />
+                    </Button>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-muted p-6 rounded-lg text-center">
+                    <div className="text-sm text-muted-foreground mb-2">{latestResult.type}</div>
+                    <div className="text-3xl font-mono font-bold text-primary">
+                      {Array.isArray(latestResult.value)
+                        ? latestResult.value.join(", ")
                         : latestResult.value.toString()
-                    }
+                      }
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-2">
+                      Generated at {new Date(latestResult.timestamp).toLocaleTimeString()}
+                    </div>
                   </div>
-                  <div className="text-xs text-muted-foreground mt-2">
-                    Generated at {new Date(latestResult.timestamp).toLocaleTimeString()}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )
           )}
         </TabsContent>
 
@@ -501,6 +501,15 @@ export function RandomNumberGeneratorConverter() {
                   </div>
                 </div>
               </div>
+              {/* Show result for lists */}
+              {latestResult && latestResult.type.startsWith("List Pick") && (
+                <div className="bg-muted p-4 rounded-lg mt-4">
+                  <div className="text-sm text-muted-foreground mb-2">Latest Pick</div>
+                  <div className="font-mono font-bold text-lg">
+                    {Array.isArray(latestResult.value) ? latestResult.value.join(", ") : latestResult.value}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -579,6 +588,17 @@ export function RandomNumberGeneratorConverter() {
               </CardContent>
             </Card>
           </div>
+          {/* Show result for games */}
+          {latestResult && (latestResult.type.startsWith("Dice Roll") || latestResult.type === "Coin Flip") && (
+            <div className="bg-muted p-4 rounded-lg mt-4">
+              <div className="text-sm text-muted-foreground mb-2">Latest Game Result</div>
+              <div className="font-mono font-bold text-lg">
+                {typeof latestResult.value === 'object' && latestResult.value.rolls ?
+                  `Rolls: ${latestResult.value.rolls.join(", ")}, Total: ${latestResult.value.total}` :
+                  latestResult.value}
+              </div>
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="text" className="space-y-6">
@@ -673,6 +693,15 @@ export function RandomNumberGeneratorConverter() {
               </CardContent>
             </Card>
           </div>
+          {/* Show result for text */}
+          {latestResult && (latestResult.type === "Password" || latestResult.type === "GUID/UUID") && (
+            <div className="bg-muted p-4 rounded-lg mt-4">
+              <div className="text-sm text-muted-foreground mb-2">Latest Generated Text</div>
+              <div className="font-mono font-bold text-lg">
+                {latestResult.value}
+              </div>
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="color" className="space-y-6">

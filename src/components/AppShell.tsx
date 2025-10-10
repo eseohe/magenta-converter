@@ -12,7 +12,7 @@ export function AppShell({ children, onHome, title = "Magenta Converter" }: { ch
               <Wand2 className="size-4" />
             </div>
             <button onClick={onHome} className="text-lg font-semibold tracking-tight hover:text-primary transition-colors cursor-pointer">
-              {title}
+              Magenta Converter
             </button>
           </div>
           <div className="flex items-center gap-2">

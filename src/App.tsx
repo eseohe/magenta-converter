@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { BrowserRouter, Routes, Route, useNavigate, useParams, useLocation } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
+import { CookieConsentBanner } from "./components/CookieConsentBanner";
 import HomePage from "./pages/Home";
 import SectionPage from "./pages/SectionPage";
 import CategoryPage from "./pages/CategoryPage";
@@ -44,22 +45,8 @@ function AppContent() {
     navigate(`/section/${sectionId}`);
   };
 
-  // Determine title based on current route
-  const getTitle = () => {
-    if (location.pathname === '/') return "Magenta Converter";
-    
-    const pathParts = location.pathname.split('/').filter(Boolean);
-    if (pathParts[0] === 'section') {
-      const section = getSectionById(pathParts[1]);
-      return section?.name || "Magenta Converter";
-    } else {
-      const category = categories.find(c => c.id === pathParts[0]);
-      return category?.name || "Magenta Converter";
-    }
-  };
-
   return (
-    <AppShell onHome={handleHome} title={getTitle()}>
+    <AppShell onHome={handleHome}>
       <div className="flex justify-center">
         {/* Left Ad Space */}
         <div className="hidden xl:block w-[120px]" />
@@ -166,6 +153,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AppContent />
+      <CookieConsentBanner />
     </BrowserRouter>
   );
 }
