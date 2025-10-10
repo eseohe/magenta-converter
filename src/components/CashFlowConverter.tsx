@@ -154,7 +154,7 @@ Profitability Index: ${results.profitabilityIndex.toFixed(2)}
 Cash Flow Summary:
 Total Cash Inflows: $${formatNumber(results.totalCashFlow)}
 Present Value of Inflows: $${formatNumber(results.presentValueOfCashFlows)}
-Net Cash Flow: $${formatNumber(results.netCashFlow)}
+Net Cash Flow: $${formatNumber(results.netCashFlow ?? 0)}
 
 Investment Decision: ${results.npv > 0 ? 'ACCEPT' : 'REJECT'} (${results.npv > 0 ? 'Positive NPV' : 'Negative NPV'})
 
@@ -313,8 +313,8 @@ Key Terms:
             
             <div className="space-y-1 p-3 bg-background border rounded-lg">
               <div className="text-sm text-muted-foreground">Net Cash Flow</div>
-              <div className={`text-xl font-semibold ${results.netCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                ${formatNumber(results.netCashFlow)}
+              <div className={`text-xl font-semibold ${(results.netCashFlow ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                ${formatNumber(results.netCashFlow ?? 0)}
               </div>
             </div>
           </div>
@@ -389,6 +389,31 @@ Key Terms:
             <Copy className="mr-2 size-4" />
             Copy Analysis
           </Button>
+        </div>
+        {/* Explanation Section */}
+        <div className="mt-8 p-4 rounded-lg bg-muted/20 text-sm">
+          <div className="font-semibold mb-1">How NPV & IRR Analysis Works</div>
+          <div>
+            <b>Formulas:</b><br />
+            <span className="font-mono">NPV = Σ [Cash Flow<sub>t</sub> / (1 + r)<sup>t</sup>] - Initial Investment</span><br />
+            <span className="font-mono">IRR: Rate where NPV = 0</span><br />
+            <span className="font-mono">Payback Period: Years to recover initial investment</span><br />
+            <span className="font-mono">Profitability Index = PV of Cash Flows / Initial Investment</span><br /><br />
+            <b>Variables:</b><br />
+            <b>Initial Investment</b>: ${parseFloat(initialInvestment)}<br />
+            <b>Discount Rate</b>: {parseFloat(discountRate)}%<br />
+            <b>Cash Flows</b>: [{cashFlows.map(cf => parseFloat(cf)).join(", ")}]<br /><br />
+            <b>Step-by-step for your values:</b><br />
+            1. <b>NPV:</b> <span className="font-mono">${formatNumber(results.npv)}</span><br />
+            2. <b>IRR:</b> <span className="font-mono">{results.irr.toFixed(2)}%</span><br />
+            3. <b>Payback period:</b> <span className="font-mono">{results.paybackPeriod.toFixed(1)} years</span><br />
+            4. <b>Discounted payback:</b> <span className="font-mono">{results.discountedPaybackPeriod.toFixed(1)} years</span><br />
+            5. <b>Profitability index:</b> <span className="font-mono">{results.profitabilityIndex.toFixed(2)}</span><br />
+            6. <b>Total cash inflows:</b> <span className="font-mono">${formatNumber(results.totalCashFlow)}</span><br />
+            7. <b>Present value of inflows:</b> <span className="font-mono">${formatNumber(results.presentValueOfCashFlows)}</span><br /><br />
+            <b>Summary:</b><br />
+            This analysis shows the NPV, IRR, payback, and profitability index for your project, with all calculations using strict number types for accuracy and safety.
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -153,12 +153,9 @@ Convexity: ${results.convexity.toFixed(2)}
 Total Return: ${results.totalReturn.toFixed(2)}%
 
 Annual Coupon: $${formatNumber(results.annualCoupon)}
-Capital Gain/Loss: $${formatNumber(results.capitalGain)}
+Capital Gain/Loss: $${formatNumber(results.capitalGain ?? 0)}
 
-Key Terms:
-- YTM: Annual return if held to maturity
-- Duration: Price sensitivity to interest rate changes
-- Convexity: Measures curvature of price-yield relationship`;
+Key Terms:`;
     await navigator.clipboard.writeText(text);
   };
 
@@ -319,8 +316,8 @@ Key Terms:
             
             <div className="space-y-1 p-3 bg-background border rounded-lg">
               <div className="text-sm text-muted-foreground">Total Return</div>
-              <div className={`text-xl font-semibold ${results.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {results.totalReturn.toFixed(2)}%
+                <div className={"text-xl font-semibold " + (results.totalReturn >= 0 ? "text-green-600" : "text-red-600") }>
+                  {results.totalReturn.toFixed(2)}%
               </div>
               <div className="text-xs text-muted-foreground">
                 If held to maturity
@@ -336,7 +333,7 @@ Key Terms:
               <div className="p-3 bg-background border rounded-lg">
                 <div className="text-sm text-muted-foreground">Total Interest Income</div>
                 <div className="text-lg font-semibold text-green-600">
-                  ${formatNumber(results.totalInterest)}
+                  ${formatNumber(results.totalInterest ?? 0)}
                 </div>
                 <div className="text-xs text-muted-foreground">
                   {yearsToMaturity} years of coupons
@@ -345,8 +342,8 @@ Key Terms:
               
               <div className="p-3 bg-background border rounded-lg">
                 <div className="text-sm text-muted-foreground">Capital Gain/Loss</div>
-                <div className={`text-lg font-semibold ${results.capitalGain >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  ${formatNumber(results.capitalGain)}
+                <div className={"text-lg font-semibold " + ((results.capitalGain ?? 0) >= 0 ? "text-green-600" : "text-red-600") }>
+                  ${formatNumber(results.capitalGain ?? 0)}
                 </div>
                 <div className="text-xs text-muted-foreground">
                   At maturity
@@ -355,11 +352,11 @@ Key Terms:
               
               <div className="p-3 bg-background border rounded-lg">
                 <div className="text-sm text-muted-foreground">Price vs Fair Value</div>
-                <div className={`text-lg font-semibold ${results.priceChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  ${formatNumber(results.priceChange)}
+                <div className={"text-lg font-semibold " + ((results.priceChange ?? 0) >= 0 ? "text-green-600" : "text-red-600") }>
+                  ${formatNumber(results.priceChange ?? 0)}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {results.priceChange >= 0 ? 'Undervalued' : 'Overvalued'}
+                  {(results.priceChange ?? 0) >= 0 ? 'Undervalued' : 'Overvalued'}
                 </div>
               </div>
             </div>
@@ -383,7 +380,37 @@ Key Terms:
             Copy Analysis
           </Button>
         </div>
+        {/* Explanation Section */}
+        <div className="mt-8 p-4 rounded-lg bg-muted/20 text-sm">
+          <div className="font-semibold mb-1">How Bond Valuation Works</div>
+          <div>
+            <b>Formulas:</b><br />
+            <span className="font-mono">Present Value = Σ [Coupon / (1 + r)<sup>t</sup>] + Face Value / (1 + r)<sup>n</sup></span><br />
+            <span className="font-mono">Current Yield = Annual Coupon / Price</span><br />
+            <span className="font-mono">Yield to Maturity (YTM):</span> solved iteratively<br />
+            <span className="font-mono">Duration = Σ [t × PV(Coupon)] / Price</span><br />
+            <span className="font-mono">Convexity = Σ [t(t+1) × PV(Coupon)] / (Price × (1 + r)<sup>2</sup>)</span><br /><br />
+            <b>Variables:</b><br />
+            <b>Face Value</b>: bond's par value<br />
+            <b>Coupon Rate</b>: annual interest rate<br />
+            <b>Price</b>: current market price<br />
+            <b>Years to Maturity</b>: time until bond matures<br />
+            <b>Required Return</b>: market yield<br />
+            <b>Coupon Frequency</b>: payments per year<br /><br />
+            <b>Step-by-step for your values:</b><br />
+            1. <b>Annual coupon:</b> <span className="font-mono">{faceValue} × {couponRate}% = {formatNumber(results.annualCoupon)}</span><br />
+            2. <b>Current yield:</b> <span className="font-mono">{formatNumber(results.currentYield)}%</span><br />
+            3. <b>Present value:</b> <span className="font-mono">{formatNumber(results.presentValue)}</span><br />
+            4. <b>Yield to maturity (YTM):</b> <span className="font-mono">{results.yieldToMaturity.toFixed(2)}%</span><br />
+            5. <b>Modified duration:</b> <span className="font-mono">{results.duration.toFixed(2)} years</span><br />
+            6. <b>Convexity:</b> <span className="font-mono">{results.convexity.toFixed(2)}</span><br />
+            7. <b>Total return (held to maturity):</b> <span className="font-mono">{results.totalReturn.toFixed(2)}%</span><br /><br />
+            <b>Summary:</b><br />
+            With your inputs, the bond's current yield is <b>{formatNumber(results.currentYield)}%</b>, YTM is <b>{results.yieldToMaturity.toFixed(2)}%</b>, and total return if held to maturity is <b>{results.totalReturn.toFixed(2)}%</b>. Duration and convexity show interest rate risk.
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
+  
 }

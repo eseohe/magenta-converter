@@ -107,6 +107,29 @@ export function InflationCalculatorConverter() {
 
   const results = calculateInflation();
 
+    // Dynamic explanation logic
+    const getExplanation = () => {
+      const amount = results.initialAmount;
+      const years = results.years;
+      const avgRate = results.avgInflationRate / 100;
+      const cumulativeFactor = results.cumulativeInflationFactor;
+      let formula = "";
+      let flow = "";
+      if (calculationType === "future") {
+        formula = `Future Value = Initial Amount × (1 + Inflation Rate)^Years`;
+        flow = `FV = ${amount} × (1 + ${avgRate.toFixed(4)})^${years} = ${(amount * Math.pow(1 + avgRate, years)).toFixed(2)}`;
+      } else if (calculationType === "past") {
+        formula = `Past Value = Initial Amount / (1 + Inflation Rate)^Years`;
+        flow = `PV = ${amount} / (1 + ${avgRate.toFixed(4)})^${years} = ${(amount / Math.pow(1 + avgRate, years)).toFixed(2)}`;
+      } else {
+        formula = `Purchasing Power = Initial Amount / (1 + Inflation Rate)^Years`;
+        flow = `PP = ${amount} / (1 + ${avgRate.toFixed(4)})^${years} = ${(amount / Math.pow(1 + avgRate, years)).toFixed(2)}`;
+      }
+      return { formula, flow };
+    };
+
+    const explanation = getExplanation();
+
   const reset = () => {
     setInitialAmount("10000");
     setStartYear("2020");
@@ -289,6 +312,13 @@ ${results.yearlyData.map(data =>
 
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Inflation Impact Analysis</h3>
+
+          {/* Dynamic Explanation Section */}
+          <div className="bg-background border rounded-lg p-4 mb-4">
+            <div className="font-semibold mb-2">How the Calculation Works</div>
+            <div className="text-sm mb-1"><strong>Formula:</strong> {explanation.formula}</div>
+            <div className="text-sm"><strong>Example:</strong> {explanation.flow}</div>
+          </div>
           
           <div className="bg-gradient-to-r from-red-50 to-orange-50 p-4 rounded-lg border">
             <div className="grid gap-4 sm:grid-cols-3 text-center">

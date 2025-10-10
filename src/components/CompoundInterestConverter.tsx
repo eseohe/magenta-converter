@@ -208,6 +208,27 @@ Total Contributions: $${formatNumber(results.totalContributions)}`;
             Copy Results
           </Button>
         </div>
+
+        {/* Explanation Section */}
+        <div className="mt-8 p-4 rounded-lg bg-muted/20 text-sm">
+          <div className="font-semibold mb-1">How Compound Interest Works</div>
+          <div>
+            Compound interest is calculated using the formula:<br />
+            <span className="font-mono">A = P(1 + r/n)<sup>nt</sup> + PMT × [((1 + r/n)<sup>nt</sup> - 1) / (r/n)]</span><br /><br />
+            <b>P</b> = initial principal<br />
+            <b>r</b> = annual interest rate (decimal)<br />
+            <b>n</b> = compounding frequency per year<br />
+            <b>t</b> = number of years<br />
+            <b>PMT</b> = regular contribution per period<br /><br />
+            <b>Step-by-step for your values:</b><br />
+            1. <b>Compound factor:</b> <span className="font-mono">(1 + {parseFloat(rate)/100}/{compoundFrequency})<sup>{compoundFrequency}×{years}</sup></span> = <span className="font-mono">{(Math.pow(1 + (parseFloat(rate)/100)/parseFloat(compoundFrequency), parseFloat(compoundFrequency)*parseFloat(years))).toFixed(6)}</span><br />
+            2. <b>Future value of principal:</b> <span className="font-mono">{principal} × {((Math.pow(1 + (parseFloat(rate)/100)/parseFloat(compoundFrequency), parseFloat(compoundFrequency)*parseFloat(years))).toFixed(6))}</span> = <span className="font-mono">${formatNumber(results.principalGrowth + parseFloat(principal))}</span><br />
+            3. <b>Future value of contributions:</b> <span className="font-mono">{monthlyContribution} × [((compound factor - 1) / ({(parseFloat(rate)/100)/12}))]</span> = <span className="font-mono">${formatNumber(results.contributionsGrowth + (parseFloat(monthlyContribution) * 12 * parseFloat(years)))}</span><br />
+            4. <b>Total future value:</b> <span className="font-mono">${formatNumber(results.futureValue)}</span><br /><br />
+            <b>Summary:</b><br />
+            If you invest <b>${principal}</b> at <b>{rate}%</b> annual interest, compounded <b>{compoundFrequency === "1" ? "annually" : compoundFrequency === "12" ? "monthly" : compoundFrequency + " times per year"}</b>, for <b>{years} years</b>{parseFloat(monthlyContribution) > 0 ? <> with a monthly contribution of <b>${monthlyContribution}</b></> : null}, your investment will grow to <b>${formatNumber(results.futureValue)}</b>.<br />
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

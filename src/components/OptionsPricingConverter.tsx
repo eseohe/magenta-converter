@@ -143,7 +143,7 @@ export function OptionsPricingConverter() {
 Option Type: ${optionType.toUpperCase()}
 Spot Price: $${parseFloat(spotPrice)}
 Strike Price: $${parseFloat(strikePrice)}
-Time to Expiry: ${parseFloat(timeToExpiry)} years (${results.daysToExpiry.toFixed(0)} days)
+Time to Expiry: ${parseFloat(timeToExpiry)} years (${(results.daysToExpiry ?? 0).toFixed(0)} days)
 Volatility: ${parseFloat(volatility)}%
 Risk-Free Rate: ${parseFloat(riskFreeRate)}%
 
@@ -158,7 +158,7 @@ Theta: $${results.theta.toFixed(4)}/day
 Vega: $${results.vega.toFixed(4)}
 Rho: $${results.rho.toFixed(4)}
 
-Moneyness: ${results.moneyness.toFixed(3)} (${results.moneyness > 1 ? 'ITM' : results.moneyness < 1 ? 'OTM' : 'ATM'})`;
+Moneyness: ${(results.moneyness ?? 0).toFixed(3)} (${(results.moneyness ?? 0) > 1 ? 'ITM' : (results.moneyness ?? 0) < 1 ? 'OTM' : 'ATM'})`;
     await navigator.clipboard.writeText(text);
   };
 
@@ -215,9 +215,9 @@ Moneyness: ${results.moneyness.toFixed(3)} (${results.moneyness > 1 ? 'ITM' : re
               </div>
 
               <div className="text-sm bg-muted p-3 rounded-md">
-                <strong>Moneyness:</strong> {results.moneyness.toFixed(3)}<br/>
-                <strong>Status:</strong> {results.moneyness > 1.02 ? 'In-the-Money (ITM)' : 
-                                       results.moneyness < 0.98 ? 'Out-of-the-Money (OTM)' : 
+                <strong>Moneyness:</strong> {(results.moneyness ?? 0).toFixed(3)}<br/>
+                <strong>Status:</strong> {(results.moneyness ?? 0) > 1.02 ? 'In-the-Money (ITM)' : 
+                                       (results.moneyness ?? 0) < 0.98 ? 'Out-of-the-Money (OTM)' : 
                                        'At-the-Money (ATM)'}
               </div>
             </div>
@@ -237,7 +237,7 @@ Moneyness: ${results.moneyness.toFixed(3)} (${results.moneyness > 1 ? 'ITM' : re
                   placeholder="0.25"
                 />
                 <div className="text-xs text-muted-foreground">
-                  {results.daysToExpiry.toFixed(0)} days
+                  {(results.daysToExpiry ?? 0).toFixed(0)} days
                 </div>
               </div>
               
@@ -299,7 +299,7 @@ Moneyness: ${results.moneyness.toFixed(3)} (${results.moneyness > 1 ? 'ITM' : re
               <div className="p-3 bg-background border rounded-lg">
                 <div className="text-sm text-muted-foreground">Put-Call Parity Check</div>
                 <div className="text-sm">
-                  Call - Put = ${(results.callPrice - results.putPrice).toFixed(4)}<br/>
+                  Call - Put = ${((results.callPrice ?? 0) - (results.putPrice ?? 0)).toFixed(4)}<br/>
                   S - K*e^(-rT) = ${(parseFloat(spotPrice) - parseFloat(strikePrice) * Math.exp(-parseFloat(riskFreeRate)/100 * parseFloat(timeToExpiry))).toFixed(4)}
                 </div>
               </div>
@@ -401,6 +401,36 @@ Moneyness: ${results.moneyness.toFixed(3)} (${results.moneyness > 1 ? 'ITM' : re
             <Copy className="mr-2 size-4" />
             Copy Analysis
           </Button>
+        </div>
+        {/* Explanation Section */}
+        <div className="mt-8 p-4 rounded-lg bg-muted/20 text-sm">
+          <div className="font-semibold mb-1">How Black-Scholes Option Pricing Works</div>
+          <div>
+            <b>Formula:</b><br />
+            <span className="font-mono">C = S·e<sup>-qT</sup>·N(d₁) - K·e<sup>-rT</sup>·N(d₂)</span> (Call)<br />
+            <span className="font-mono">P = K·e<sup>-rT</sup>·N(-d₂) - S·e<sup>-qT</sup>·N(-d₁)</span> (Put)<br /><br />
+            <b>Variables:</b><br />
+            <b>S</b>: Spot price (${parseFloat(spotPrice)})<br />
+            <b>K</b>: Strike price (${parseFloat(strikePrice)})<br />
+            <b>T</b>: Time to expiry ({parseFloat(timeToExpiry)} years)<br />
+            <b>σ</b>: Volatility ({parseFloat(volatility)}%)<br />
+            <b>r</b>: Risk-free rate ({parseFloat(riskFreeRate)}%)<br />
+            <b>q</b>: Dividend yield ({parseFloat(dividendYield)}%)<br /><br />
+            <b>Step-by-step for your values:</b><br />
+            1. <b>Calculate d₁:</b> <span className="font-mono">d₁ = [ln(S/K) + (r - q + σ²/2)·T] / (σ·√T)</span> = {(results.d1 ?? 0).toFixed(4)}<br />
+            2. <b>Calculate d₂:</b> <span className="font-mono">d₂ = d₁ - σ·√T</span> = {(results.d2 ?? 0).toFixed(4)}<br />
+            3. <b>Call price:</b> <span className="font-mono">${(results.callPrice ?? 0).toFixed(4)}</span><br />
+            4. <b>Put price:</b> <span className="font-mono">${(results.putPrice ?? 0).toFixed(4)}</span><br />
+            5. <b>Intrinsic value:</b> <span className="font-mono">${(results.intrinsicValue ?? 0).toFixed(4)}</span><br />
+            6. <b>Time value:</b> <span className="font-mono">${(results.timeValue ?? 0).toFixed(4)}</span><br />
+            7. <b>Delta:</b> <span className="font-mono">{(results.delta ?? 0).toFixed(4)}</span><br />
+            8. <b>Gamma:</b> <span className="font-mono">{(results.gamma ?? 0).toFixed(4)}</span><br />
+            9. <b>Theta:</b> <span className="font-mono">${(results.theta ?? 0).toFixed(4)}/day</span><br />
+            10. <b>Vega:</b> <span className="font-mono">${(results.vega ?? 0).toFixed(4)}</span><br />
+            11. <b>Rho:</b> <span className="font-mono">${(results.rho ?? 0).toFixed(4)}</span><br /><br />
+            <b>Summary:</b><br />
+            Using your inputs, the Black-Scholes model calculates the option price and Greeks, showing how each parameter affects the value and risk profile of the option.
+          </div>
         </div>
       </CardContent>
     </Card>

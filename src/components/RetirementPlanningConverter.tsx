@@ -366,6 +366,33 @@ Income Replacement: ${results.replacementRatio.toFixed(1)}%`;
             Copy Projection
           </Button>
         </div>
+        {/* Explanation Section */}
+        <div className="mt-8 p-4 rounded-lg bg-muted/20 text-sm">
+          <div className="font-semibold mb-1">How Retirement Projection Works</div>
+          <div>
+            <b>Formula:</b><br />
+            <span className="font-mono">Future Balance = (Current Balance + Σ(Annual Contributions + Employer Match)) × (1 + r)<sup>years</sup></span><br /><br />
+            <b>Variables:</b><br />
+            <b>Current Balance</b>: starting 401k/IRA balance<br />
+            <b>Annual Contributions</b>: salary × your contribution %<br />
+            <b>Employer Match</b>: salary × employer match % (up to your contribution)<br />
+            <b>r</b>: annual return rate (decimal)<br />
+            <b>years</b>: years to retirement<br />
+            <b>Salary Growth</b>: salary increases each year by growth rate<br />
+            <b>Inflation</b>: future value adjusted to today's dollars<br /><br />
+            <b>Step-by-step for your values:</b><br />
+            1. <b>Years to retirement:</b> {results.yearsToRetirement}<br />
+            2. <b>Annual personal contribution (first year):</b> <span className="font-mono">{currentSalary} × {parseFloat(contribution)/100} = {formatNumber(results.yearlyContribution)}</span><br />
+            3. <b>Annual employer match (first year):</b> <span className="font-mono">{currentSalary} × {parseFloat(employerMatch)/100} (up to personal contrib) = {formatNumber(Math.min(parseFloat(currentSalary) * parseFloat(employerMatch) / 100, results.yearlyContribution))}</span><br />
+            4. <b>Each year:</b> Add contributions, apply investment return ({returnRate}%), grow salary ({salaryGrowth}%)<br />
+            5. <b>Final projected balance:</b> <span className="font-mono">{formatNumber(results.finalBalance)}</span><br />
+            6. <b>Real value (after inflation {inflationRate}%):</b> <span className="font-mono">{formatNumber(results.realValue)}</span><br />
+            7. <b>Monthly retirement income (4% rule):</b> <span className="font-mono">{formatNumber(results.monthlyIncome)}</span><br />
+            8. <b>Income replacement ratio:</b> <span className="font-mono">{results.replacementRatio.toFixed(1)}%</span><br /><br />
+            <b>Summary:</b><br />
+            If you contribute <b>{contribution}%</b> of your salary (${currentSalary}) with <b>{employerMatch}%</b> employer match, starting at age <b>{currentAge}</b> and retiring at <b>{retirementAge}</b>, your projected retirement balance is <b>${formatNumber(results.finalBalance)}</b> (real value: <b>${formatNumber(results.realValue)}</b>), providing a monthly income of <b>${formatNumber(results.monthlyIncome)}</b> and replacing <b>{results.replacementRatio.toFixed(1)}%</b> of your final salary.
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

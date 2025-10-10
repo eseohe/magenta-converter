@@ -580,6 +580,34 @@ Margin Level: ${results.marginLevel.toFixed(0)}%`;
             Copy Analysis
           </Button>
         </div>
+        {/* Explanation Section */}
+        <div className="mt-8 p-4 rounded-lg bg-muted/20 text-sm">
+          <div className="font-semibold mb-1">How Forex Trade Calculations Work</div>
+          <div>
+            <b>Formula:</b><br />
+            <span className="font-mono">Pip Movement = (Exit Price - Entry Price) / Pip Size</span><br />
+            <span className="font-mono">Profit/Loss = Pip Movement × Pip Value × (Position Size / 100,000)</span><br />
+            <span className="font-mono">Margin Required = Position Size / Leverage</span><br /><br />
+            <b>Variables:</b><br />
+            <b>Entry Price</b>: {parseFloat(entryPrice)}<br />
+            <b>Exit Price</b>: {parseFloat(exitPrice)}<br />
+            <b>Position Size</b>: {parseFloat(positionSize)} units<br />
+            <b>Pip Size</b>: {selectedPair.baseDecimals === 2 ? '0.01' : '0.0001'}<br />
+            <b>Pip Value</b>: ${selectedPair.pipValue} per standard lot<br />
+            <b>Leverage</b>: {parseFloat(leverage)}:1<br /><br />
+            <b>Step-by-step for your values:</b><br />
+            1. <b>Pip movement:</b> <span className="font-mono">{results.pipMovement.toFixed(1)} pips</span><br />
+            2. <b>Profit/Loss:</b> <span className="font-mono">{results.profitLoss >= 0 ? '+' : ''}${formatNumber(results.profitLoss)}</span><br />
+            3. <b>Margin required:</b> <span className="font-mono">${formatNumber(results.marginRequired)}</span><br />
+            4. <b>Stop loss:</b> <span className="font-mono">{results.stopLossPips.toFixed(1)} pips → -${formatNumber(results.stopLossAmount)}</span><br />
+            5. <b>Take profit:</b> <span className="font-mono">{results.takeProfitPips.toFixed(1)} pips → +${formatNumber(results.takeProfitAmount)}</span><br />
+            6. <b>Risk/reward ratio:</b> <span className="font-mono">{results.riskRewardRatio > 0 ? `1:${results.riskRewardRatio.toFixed(2)}` : 'N/A'}</span><br />
+            7. <b>Optimal position size for {riskPercent}% risk:</b> <span className="font-mono">{formatNumber(results.optimalPositionSize)} units</span><br />
+            8. <b>Margin level:</b> <span className="font-mono">{results.marginLevel.toFixed(0)}%</span><br /><br />
+            <b>Summary:</b><br />
+            This trade analysis shows pip movement, profit/loss, margin requirements, and risk management based on your inputs. All calculations use strict number types for accuracy and safety.
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

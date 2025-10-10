@@ -285,10 +285,10 @@ Margin of Safety: ${results.marginOfSafetyPercent.toFixed(1)}%`;
               <div className="p-3 bg-background border rounded-lg">
                 <div className="text-sm text-muted-foreground">Variable Costs</div>
                 <div className="text-lg font-semibold text-orange-600">
-                  ${formatNumber(results.currentVariableCosts)}
+                  ${formatNumber(results.currentVariableCosts ?? 0)}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {((results.currentVariableCosts / results.currentTotalCosts) * 100).toFixed(1)}% of total
+                  {(((results.currentVariableCosts ?? 0) / results.currentTotalCosts) * 100).toFixed(1)}% of total
                 </div>
               </div>
               
@@ -324,6 +324,32 @@ Margin of Safety: ${results.marginOfSafetyPercent.toFixed(1)}%`;
             <Copy className="mr-2 size-4" />
             Copy Analysis
           </Button>
+        </div>
+        {/* Explanation Section */}
+        <div className="mt-8 p-4 rounded-lg bg-muted/20 text-sm">
+          <div className="font-semibold mb-1">How Break-Even Analysis Works</div>
+          <div>
+            <b>Formula:</b><br />
+            <span className="font-mono">Break-Even Units = Fixed Costs / (Selling Price - Variable Cost)</span><br />
+            <span className="font-mono">Contribution Margin = Selling Price - Variable Cost</span><br />
+            <span className="font-mono">Units for Target Profit = (Fixed Costs + Target Profit) / Contribution Margin</span><br /><br />
+            <b>Variables:</b><br />
+            <b>Fixed Costs</b>: ${parseFloat(fixedCosts)}<br />
+            <b>Variable Cost per Unit</b>: ${parseFloat(variableCostPerUnit)}<br />
+            <b>Selling Price per Unit</b>: ${parseFloat(sellingPricePerUnit)}<br />
+            <b>Target Profit</b>: ${parseFloat(targetProfit)}<br />
+            <b>Current Volume</b>: {parseFloat(currentVolume)} units<br /><br />
+            <b>Step-by-step for your values:</b><br />
+            1. <b>Contribution margin:</b> <span className="font-mono">${results.contributionMargin.toFixed(2)}</span><br />
+            2. <b>Break-even units:</b> <span className="font-mono">{formatNumber(results.breakEvenUnits)}</span><br />
+            3. <b>Break-even revenue:</b> <span className="font-mono">${formatNumber(results.breakEvenRevenue)}</span><br />
+            4. <b>Units for target profit:</b> <span className="font-mono">{formatNumber(results.unitsForTargetProfit)}</span><br />
+            5. <b>Revenue for target profit:</b> <span className="font-mono">${formatNumber(results.revenueForTargetProfit)}</span><br />
+            6. <b>Margin of safety:</b> <span className="font-mono">{results.marginOfSafetyPercent.toFixed(1)}%</span><br />
+            7. <b>Operating leverage:</b> <span className="font-mono">{results.operatingLeverage.toFixed(2)}×</span><br /><br />
+            <b>Summary:</b><br />
+            This analysis shows how many units you need to sell to break even and reach your profit goal, with all calculations using strict number types for accuracy and safety.
+          </div>
         </div>
       </CardContent>
     </Card>

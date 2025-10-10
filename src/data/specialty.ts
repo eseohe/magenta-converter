@@ -234,4 +234,6 @@ export const specialtyCustomCategories: CustomCategory[] = [
   { id: "numbers", group: "Other", name: "Number Bases", description: "Binary, octal, decimal, hex + any base (2–36)", icon: "Hash", custom: true },
   { id: "colors", group: "Other", name: "Color Codes", description: "HEX, RGB, HSL, CMYK color conversions", icon: "Palette", custom: true },
   { id: "timezones", group: "Other", name: "Time Zones", description: "World time zones and UTC offset conversions", icon: "Globe2", custom: true },
+  { id: "density-calculator", group: "Science", name: "Density Calculator", description: "Calculate density from mass and volume", icon: "BarChart2", custom: true },
+  { id: "flowrate-calculator", group: "Science", name: "Flow Rate Calculator", description: "Calculate flow rate from volume and time", icon: "Activity", custom: true },
 ];

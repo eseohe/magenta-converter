@@ -60,43 +60,52 @@ function AppContent() {
 
   return (
     <AppShell onHome={handleHome} title={getTitle()}>
-      <div className="mb-6 grid gap-4 sm:grid-cols-[1fr,auto] sm:items-center">
-        <SearchBar 
-          value={query} 
-          onChange={setQuery} 
-          placeholder="Search conversions, e.g. km to mi" 
-        />
-      </div>
+      <div className="flex justify-center">
+        {/* Left Ad Space */}
+        <div className="hidden xl:block w-[120px]" />
+        {/* Main Content */}
+        <div className="w-full max-w-4xl mx-auto">
+          <div className="mb-6 grid gap-4 sm:grid-cols-[1fr,auto] sm:items-center">
+            <SearchBar 
+              value={query} 
+              onChange={setQuery} 
+              placeholder="Search conversions, e.g. km to mi" 
+            />
+          </div>
 
-      <Routes>
-        {/* Home page */}
-        <Route path="/" element={
-          <HomePage 
-            categories={filtered} 
-            onSelect={handleCategorySelect} 
-            onSectionSelect={handleSectionSelect}
-            searchQuery={query}
-          />
-        } />
-        
-        {/* Section pages */}
-        <Route path="/section/:sectionId" element={<SectionPageRoute onSelect={handleCategorySelect} onHome={handleHome} />} />
-        
-        {/* Category pages */}
-        <Route path="/:categoryId" element={<CategoryPageRoute onHome={handleHome} onBackToSection={handleBackToSection} />} />
-      </Routes>
+          <Routes>
+            {/* Home page */}
+            <Route path="/" element={
+              <HomePage 
+                categories={filtered} 
+                onSelect={handleCategorySelect} 
+                onSectionSelect={handleSectionSelect}
+                searchQuery={query}
+              />
+            } />
+            
+            {/* Section pages */}
+            <Route path="/section/:sectionId" element={<SectionPageRoute onSelect={handleCategorySelect} onHome={handleHome} />} />
+            
+            {/* Category pages */}
+            <Route path="/:categoryId" element={<CategoryPageRoute onHome={handleHome} onBackToSection={handleBackToSection} />} />
+          </Routes>
 
-      {/* Search results when there's a query and we're on home page */}
-      {location.pathname === '/' && filtered.length === 0 && query && (
-        <div className="text-center text-muted-foreground mt-8">No categories match your search.</div>
-      )}
+          {/* Search results when there's a query and we're on home page */}
+          {location.pathname === '/' && filtered.length === 0 && query && (
+            <div className="text-center text-muted-foreground mt-8">No categories match your search.</div>
+          )}
 
-      {location.pathname === '/' && filtered.length > 0 && query && (
-        <div className="mt-8">
-          <h3 className="mb-3 text-sm uppercase tracking-wide text-muted-foreground">All matches</h3>
-          <CategoryGrid categories={filtered} onSelect={handleCategorySelect} />
+          {location.pathname === '/' && filtered.length > 0 && query && (
+            <div className="mt-8">
+              <h3 className="mb-3 text-sm uppercase tracking-wide text-muted-foreground">All matches</h3>
+              <CategoryGrid categories={filtered} onSelect={handleCategorySelect} />
+            </div>
+          )}
         </div>
-      )}
+        {/* Right Ad Space */}
+        <div className="hidden xl:block w-[120px]" />
+      </div>
     </AppShell>
   );
 }

@@ -185,6 +185,27 @@ Total Amount Paid: $${formatNumber(results.totalAmount + parseFloat(downPayment)
             Copy Summary
           </Button>
         </div>
+
+        {/* Explanation Section */}
+        <div className="mt-8 p-4 rounded-lg bg-muted/20 text-sm">
+          <div className="font-semibold mb-1">How Loan Payments Work</div>
+          <div>
+            The monthly payment is calculated using:<br />
+            <span className="font-mono">M = P × [r(1 + r)<sup>n</sup>] / [(1 + r)<sup>n</sup> - 1]</span><br /><br />
+            <b>P</b> = principal (loan amount minus down payment)<br />
+            <b>r</b> = monthly interest rate (annual rate / 12)<br />
+            <b>n</b> = total number of payments (months)<br /><br />
+            <b>Step-by-step for your values:</b><br />
+            1. <b>Principal:</b> <span className="font-mono">{loanAmount} - {downPayment} = {results.principal.toFixed(2)}</span><br />
+            2. <b>Monthly interest rate:</b> <span className="font-mono">({interestRate} / 100) / 12 = {(parseFloat(interestRate)/100/12).toFixed(6)}</span><br />
+            3. <b>Number of payments:</b> <span className="font-mono">{loanTerm} × 12 = {parseFloat(loanTerm)*12}</span><br />
+            4. <b>Monthly payment:</b> <span className="font-mono">{results.principal.toFixed(2)} × [{(parseFloat(interestRate)/100/12).toFixed(6)} × (1 + {(parseFloat(interestRate)/100/12).toFixed(6)})<sup>{parseFloat(loanTerm)*12}</sup>] / [(1 + {(parseFloat(interestRate)/100/12).toFixed(6)})<sup>{parseFloat(loanTerm)*12}</sup> - 1]</span> = <span className="font-mono">${formatNumber(results.monthlyPayment)}</span><br />
+            5. <b>Total interest paid:</b> <span className="font-mono">${formatNumber(results.totalInterest)}</span><br />
+            6. <b>Total cost (including down payment):</b> <span className="font-mono">${formatNumber(results.totalAmount + parseFloat(downPayment))}</span><br /><br />
+            <b>Summary:</b><br />
+            For a loan amount of <b>${loanAmount}</b> with a <b>${downPayment}</b> down payment, a <b>{loanTerm}-year</b> loan at <b>{interestRate}%</b> interest, your monthly payment will be <b>${formatNumber(results.monthlyPayment)}</b> and the total cost will be <b>${formatNumber(results.totalAmount + parseFloat(downPayment))}</b>.<br />
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

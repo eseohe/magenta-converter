@@ -311,6 +311,31 @@ Loan-to-Value: ${results.loanToValue.toFixed(1)}%`;
             Copy Breakdown
           </Button>
         </div>
+
+        {/* Explanation Section */}
+        <div className="mt-8 p-4 rounded-lg bg-muted/20 text-sm">
+          <div className="font-semibold mb-1">How Mortgage Payments Work</div>
+          <div>
+            The monthly principal and interest payment is calculated using:<br />
+            <span className="font-mono">M = P × [r(1 + r)<sup>n</sup>] / [(1 + r)<sup>n</sup> - 1]</span><br /><br />
+            <b>P</b> = loan amount<br />
+            <b>r</b> = monthly interest rate (annual rate / 12)<br />
+            <b>n</b> = total number of payments (months)<br /><br />
+            <b>Step-by-step for your values:</b><br />
+            1. <b>Loan amount:</b> <span className="font-mono">{homePrice} - {downPayment} = {results.principal.toFixed(2)}</span><br />
+            2. <b>Monthly interest rate:</b> <span className="font-mono">({interestRate} / 100) / 12 = {(parseFloat(interestRate)/100/12).toFixed(6)}</span><br />
+            3. <b>Number of payments:</b> <span className="font-mono">{loanTerm} × 12 = {parseFloat(loanTerm)*12}</span><br />
+            4. <b>Monthly principal & interest:</b> <span className="font-mono">{results.principal.toFixed(2)} × [{(parseFloat(interestRate)/100/12).toFixed(6)} × (1 + {(parseFloat(interestRate)/100/12).toFixed(6)})<sup>{parseFloat(loanTerm)*12}</sup>] / [(1 + {(parseFloat(interestRate)/100/12).toFixed(6)})<sup>{parseFloat(loanTerm)*12}</sup> - 1]</span> = <span className="font-mono">${formatNumber(results.monthlyPrincipalInterest)}</span><br />
+            5. <b>Add monthly taxes, insurance, PMI, HOA:</b><br />
+            &nbsp;&nbsp;Property Tax: <span className="font-mono">${formatNumber(results.monthlyPropertyTax)}</span><br />
+            &nbsp;&nbsp;Insurance: <span className="font-mono">${formatNumber(results.monthlyInsurance)}</span><br />
+            &nbsp;&nbsp;PMI: <span className="font-mono">${formatNumber(results.monthlyPMI)}</span><br />
+            &nbsp;&nbsp;HOA: <span className="font-mono">${formatNumber(results.monthlyHOA)}</span><br />
+            6. <b>Total monthly payment:</b> <span className="font-mono">${formatNumber(results.totalMonthlyPayment)}</span><br /><br />
+            <b>Summary:</b><br />
+            For a home price of <b>${homePrice}</b> with a <b>${downPayment}</b> down payment, a <b>{loanTerm}-year</b> loan at <b>{interestRate}%</b> interest, your total monthly payment will be <b>${formatNumber(results.totalMonthlyPayment)}</b>.<br />
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

@@ -153,6 +153,48 @@ export function PortfolioAnalyzerConverter() {
 
   const results = calculatePortfolioMetrics();
 
+    // Dynamic explanation logic
+    const getExplanation = () => {
+      // Weighted Return
+      const weightedReturnFormula = "Portfolio Return = Σ (Weight × Expected Return)";
+      const weightedReturnFlow = results.holdingValues.length > 0
+        ? `= ${results.holdingValues.map(h => `${h.weight.toFixed(2)} × ${(h.expectedReturn * 100).toFixed(2)}%`).join(' + ')} = ${results.portfolioReturn.toFixed(2)}%`
+        : "";
+
+      // Weighted Beta
+      const weightedBetaFormula = "Portfolio Beta = Σ (Weight × Beta)";
+      const weightedBetaFlow = results.holdingValues.length > 0
+        ? `= ${results.holdingValues.map(h => `${h.weight.toFixed(2)} × ${h.beta.toFixed(2)}`).join(' + ')} = ${results.portfolioBeta.toFixed(2)}`
+        : "";
+
+      // Sharpe Ratio
+      const sharpeFormula = "Sharpe Ratio = (Portfolio Return - Risk-Free Rate) / Volatility";
+      const sharpeFlow = `= (${results.portfolioReturn.toFixed(2)}% - ${(parseFloat(riskFreeRate)).toFixed(2)}%) / ${results.expectedVolatility.toFixed(2)}% = ${results.sharpeRatio.toFixed(2)}`;
+
+      // Treynor Ratio
+      const treynorFormula = "Treynor Ratio = (Portfolio Return - Risk-Free Rate) / Portfolio Beta";
+      const treynorFlow = `= (${results.portfolioReturn.toFixed(2)}% - ${(parseFloat(riskFreeRate)).toFixed(2)}%) / ${results.portfolioBeta.toFixed(2)} = ${results.treynorRatio.toFixed(2)}%`;
+
+      // Alpha
+      const alphaFormula = "Alpha = Portfolio Return - [Beta × (Market Return - Risk-Free Rate)]";
+      const alphaFlow = `= ${results.portfolioReturn.toFixed(2)}% - [${results.portfolioBeta.toFixed(2)} × (${(parseFloat(marketReturn)).toFixed(2)}% - ${(parseFloat(riskFreeRate)).toFixed(2)}%)] = ${results.alpha.toFixed(2)}%`;
+
+      return {
+        weightedReturnFormula,
+        weightedReturnFlow,
+        weightedBetaFormula,
+        weightedBetaFlow,
+        sharpeFormula,
+        sharpeFlow,
+        treynorFormula,
+        treynorFlow,
+        alphaFormula,
+        alphaFlow
+      };
+    };
+
+    const explanation = getExplanation();
+
   const reset = () => {
     setMarketReturn("10");
     setRiskFreeRate("3");
@@ -336,6 +378,16 @@ ${results.holdingValues.map(h =>
 
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Portfolio Analysis</h3>
+
+          {/* Dynamic Explanation Section */}
+          <div className="bg-background border rounded-lg p-4 mb-4">
+            <div className="font-semibold mb-2">How the Key Metrics Are Calculated</div>
+            <div className="text-sm mb-1"><strong>Portfolio Return:</strong> {explanation.weightedReturnFormula}<br /><span className="text-muted-foreground">{explanation.weightedReturnFlow}</span></div>
+            <div className="text-sm mb-1"><strong>Portfolio Beta:</strong> {explanation.weightedBetaFormula}<br /><span className="text-muted-foreground">{explanation.weightedBetaFlow}</span></div>
+            <div className="text-sm mb-1"><strong>Sharpe Ratio:</strong> {explanation.sharpeFormula}<br /><span className="text-muted-foreground">{explanation.sharpeFlow}</span></div>
+            <div className="text-sm mb-1"><strong>Treynor Ratio:</strong> {explanation.treynorFormula}<br /><span className="text-muted-foreground">{explanation.treynorFlow}</span></div>
+            <div className="text-sm"><strong>Alpha:</strong> {explanation.alphaFormula}<br /><span className="text-muted-foreground">{explanation.alphaFlow}</span></div>
+          </div>
           
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border">
             <div className="grid gap-4 sm:grid-cols-3 text-center">

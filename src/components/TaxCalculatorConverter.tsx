@@ -14,6 +14,14 @@ interface TaxBracket {
   rate: number;
 }
 
+interface TaxBracketBreakdown {
+  min: number;
+  max: string | number;
+  rate: number;
+  taxableAmount: number;
+  tax: number;
+}
+
 const TAX_BRACKETS_2024: { [key: string]: TaxBracket[] } = {
   single: [
     { min: 0, max: 11000, rate: 0.10 },
@@ -95,7 +103,7 @@ export function TaxCalculatorConverter() {
     const brackets = TAX_BRACKETS_2024[filingStatus];
     let federalTax = 0;
     let remainingIncome = taxableIncome;
-    const bracketBreakdown = [];
+  const bracketBreakdown: TaxBracketBreakdown[] = [];
     
     for (const bracket of brackets) {
       if (remainingIncome <= 0) break;
@@ -529,6 +537,40 @@ ${results.bracketBreakdown.map(b =>
             <Copy className="mr-2 size-4" />
             Copy Results
           </Button>
+        </div>
+        {/* Explanation Section */}
+        <div className="mt-8 p-4 rounded-lg bg-muted/20 text-sm">
+          <div className="font-semibold mb-1">How Tax Calculation Works</div>
+          <div>
+            <b>Formula:</b><br />
+            <span className="font-mono">Taxable Income = Gross Income - Pre-tax Contributions - Deductions</span><br />
+            <span className="font-mono">Federal Tax = Σ (taxable amount in bracket × rate)</span><br />
+            <span className="font-mono">Total Tax = Federal Tax - Credits + FICA + State Tax</span><br /><br />
+            <b>Variables:</b><br />
+            <b>Gross Income</b>: total annual income<br />
+            <b>Pre-tax Contributions</b>: 401k, IRA, HSA<br />
+            <b>Deductions</b>: standard or itemized<br />
+            <b>Taxable Income</b>: income after deductions<br />
+            <b>Federal Tax</b>: calculated using progressive tax brackets<br />
+            <b>Credits</b>: child tax credit, etc.<br />
+            <b>FICA</b>: Social Security & Medicare<br />
+            <b>State Tax</b>: flat rate on AGI<br /><br />
+            <b>Step-by-step for your values:</b><br />
+            1. <b>Gross income:</b> ${formatNumber(results.grossIncome)}<br />
+            2. <b>Pre-tax contributions:</b> ${formatNumber(parseFloat(contributionsPre))}<br />
+            3. <b>Deductions used:</b> ${formatNumber(results.deduction)}<br />
+            4. <b>Taxable income:</b> ${formatNumber(results.taxableIncome)}<br />
+            5. <b>Federal tax:</b> ${formatNumber(results.federalTax)}<br />
+            6. <b>Credits applied:</b> ${formatNumber(results.totalCredits)}<br />
+            7. <b>FICA taxes:</b> ${formatNumber(results.totalFicaTax)}<br />
+            8. <b>State tax:</b> ${formatNumber(results.stateTax)}<br />
+            9. <b>Total tax:</b> ${formatNumber(results.totalTax)}<br />
+            10. <b>Net income:</b> ${formatNumber(results.netIncome)}<br />
+            11. <b>Effective tax rate:</b> {results.effectiveTaxRate.toFixed(2)}%<br />
+            12. <b>Marginal tax rate:</b> {results.marginalRate.toFixed(0)}%<br /><br />
+            <b>Summary:</b><br />
+            With a gross income of <b>${formatNumber(results.grossIncome)}</b>, after pre-tax contributions and deductions, your taxable income is <b>${formatNumber(results.taxableIncome)}</b>. Your total tax (federal, FICA, state) is <b>${formatNumber(results.totalTax)}</b>, leaving you with a net income of <b>${formatNumber(results.netIncome)}</b>.
+          </div>
         </div>
       </CardContent>
     </Card>

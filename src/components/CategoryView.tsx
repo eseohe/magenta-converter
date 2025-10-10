@@ -33,9 +33,13 @@ import { GeometryCalculatorConverter } from "./GeometryCalculatorConverter";
 import { MatrixCalculatorConverter } from "./MatrixCalculatorConverter";
 import { PrimeNumberToolsConverter } from "./PrimeNumberToolsConverter";
 import { GcdLcmCalculatorConverter } from "./GcdLcmCalculatorConverter";
+import { DensityCalculator } from "./DensityCalculator";
+import { FlowRateCalculator } from "./FlowRateCalculator";
 
 export function CategoryView({ category }: { category: Category }) {
   if ((category as any).custom) {
+      if (category.id === "density-calculator") return <DensityCalculator />;
+      if (category.id === "flowrate-calculator") return <FlowRateCalculator />;
     if (category.id === "numbers") return <NumericBaseConverter />;
     if (category.id === "currency") return <CurrencyConverter />;
     if (category.id === "colors") return <ColorConverter />;

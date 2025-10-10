@@ -263,6 +263,29 @@ Annualized Return: ${results.annualizedReturn.toFixed(2)}%`;
             Copy Analysis
           </Button>
         </div>
+
+          {/* Explanation Section */}
+          <div className="mt-8 p-4 rounded-lg bg-muted/20 text-sm">
+            <div className="font-semibold mb-1">How Investment Returns Work</div>
+            <div>
+              The future value of your investment is calculated using:<br />
+              <span className="font-mono">FV = P(1 + r)<sup>t</sup> + PMT × [((1 + r/12)<sup>n</sup> - 1) / (r/12)]</span><br /><br />
+              <b>P</b> = initial investment<br />
+              <b>r</b> = annual return rate (decimal)<br />
+              <b>t</b> = number of years<br />
+              <b>PMT</b> = monthly contribution<br />
+              <b>n</b> = total months<br /><br />
+              <b>Step-by-step for your values:</b><br />
+              1. <b>Future value of initial investment:</b> <span className="font-mono">{initialInvestment} × (1 + {parseFloat(expectedReturn)/100})<sup>{timeHorizon}</sup> = {formatNumber(results.initialFV)}</span><br />
+              2. <b>Future value of monthly contributions:</b> <span className="font-mono">{monthlyContribution} × [((1 + {(parseFloat(expectedReturn)/100/12).toFixed(6)})<sup>{parseFloat(timeHorizon)*12}</sup> - 1) / {(parseFloat(expectedReturn)/100/12).toFixed(6)}]</span> = {formatNumber(results.monthlyFV)}<br />
+              3. <b>Total future value:</b> <span className="font-mono">{formatNumber(results.futureValue)}</span><br />
+              4. <b>Total contributions:</b> <span className="font-mono">{formatNumber(results.totalContributions)}</span><br />
+              5. <b>Total gains:</b> <span className="font-mono">{formatNumber(results.totalGains)}</span><br />
+              6. <b>Adjusted for inflation ({inflationRate}%):</b> <span className="font-mono">{formatNumber(results.realValue)}</span><br /><br />
+              <b>Summary:</b><br />
+              If you invest <b>${initialInvestment}</b> with <b>${monthlyContribution}</b> monthly contributions, at <b>{expectedReturn}%</b> expected annual return for <b>{timeHorizon} years</b>, your investment will grow to <b>${formatNumber(results.futureValue)}</b> (real value: <b>${formatNumber(results.realValue)}</b> after inflation).
+            </div>
+          </div>
       </CardContent>
     </Card>
   );

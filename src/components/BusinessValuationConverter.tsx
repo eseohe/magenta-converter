@@ -419,6 +419,35 @@ Key Terms:
             Copy Analysis
           </Button>
         </div>
+        {/* Explanation Section */}
+        <div className="mt-8 p-4 rounded-lg bg-muted/20 text-sm">
+          <div className="font-semibold mb-1">How Business Valuation Works</div>
+          <div>
+            <b>Formulas:</b><br />
+            <span className="font-mono">DCF = Σ [FCF × (1 + g)<sup>year</sup> / (1 + r)<sup>year</sup>] + Terminal Value</span><br />
+            <span className="font-mono">Terminal Value = Final Year FCF × Terminal Multiple / (1 + r)<sup>years</sup></span><br />
+            <span className="font-mono">P/E Valuation = Net Income × P/E Ratio</span><br />
+            <span className="font-mono">P/S Valuation = Revenue × P/S Ratio</span><br />
+            <span className="font-mono">EV/EBITDA = EBITDA × EV/EBITDA Ratio</span><br />
+            <span className="font-mono">Book Value = Assets - Liabilities</span><br /><br />
+            <b>Variables:</b><br />
+            <b>FCF</b>: Free Cash Flow<br />
+            <b>g</b>: Growth Rate<br />
+            <b>r</b>: Discount Rate (WACC)<br />
+            <b>years</b>: Projection Years<br />
+            <b>Terminal Multiple</b>: Industry exit multiple<br />
+            <b>P/E, P/S, EV/EBITDA</b>: Market multiples<br /><br />
+            <b>Step-by-step for your values:</b><br />
+            1. <b>Book value:</b> <span className="font-mono">{assets} - {liabilities} = {formatNumber(results.bookValue)}</span><br />
+            2. <b>DCF valuation:</b> Project {projectionYears} years of FCF ({cashFlow}) growing at {growthRate}%, discounted at {discountRate}%. Terminal value added using {terminalMultiple}× multiple.<br />
+            3. <b>P/E valuation:</b> <span className="font-mono">{netIncome} × {peRatio} = {formatNumber(results.peValuation)}</span><br />
+            4. <b>P/S valuation:</b> <span className="font-mono">{revenue} × {psRatio} = {formatNumber(results.psValuation)}</span><br />
+            5. <b>EV/EBITDA valuation:</b> EBITDA estimated as Net Income + 30%, then × {evEbitda} = {formatNumber(results.evEbitdaValuation)}<br />
+            6. <b>Weighted average valuation:</b> 40% DCF, 25% P/E, 15% P/S, 20% EV/EBITDA = <span className="font-mono">{formatNumber(results.weightedValue)}</span><br /><br />
+            <b>Summary:</b><br />
+            Using your inputs, the weighted business valuation is <b>${formatNumber(results.weightedValue)}</b>, combining DCF, market multiples, and asset-based approaches for a comprehensive estimate.
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
