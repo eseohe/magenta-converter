@@ -51,7 +51,7 @@ export default function HomePage({ categories, onSelect, onSectionSelect, search
   return (
     <div className="space-y-8 flex justify-center">
       {/* Left Ad Space */}
-      <div className="hidden xl:block w-[120px]" />
+      <div className="hidden xl:block w-[0px]" />
       {/* Main Content */}
       <div className="w-full max-w-4xl mx-auto">
       <div className="mx-auto max-w-3xl text-center space-y-3">
@@ -78,7 +78,7 @@ export default function HomePage({ categories, onSelect, onSectionSelect, search
         {renderSEOGrid()}
       </div>
       {/* Right Ad Space */}
-      <div className="hidden xl:block w-[120px]" />
+      <div className="hidden xl:block w-[0px]" />
     </div>
   );
 }
